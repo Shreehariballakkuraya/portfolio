@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="favicon.png" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shreehari Ballakkuraya | Developer & Data Analyst</title>
@@ -10,11 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- AOS Animate On Scroll CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
 
 </head>
 <body>
 
-    <nav id="navbar">
+    <nav id="navbar" role="navigation" aria-label="Main Navigation">
         <a href="#hero" class="logo">SB</a>
         <ul>
             <li><a href="#about">About</a></li>
@@ -23,6 +26,9 @@
             <li><a href="#education">Education</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
+        <button id="theme-toggle" aria-label="Toggle Dark/Light Mode" tabindex="0">
+            <i class="fa-solid fa-moon"></i>
+        </button>
     </nav>
 
     <section id="hero">
@@ -35,7 +41,7 @@
             <i class="fa-solid fa-chevron-down"></i>
         </a>
     </section>
-<section id="about" class="container reveal">
+<section id="about" class="container reveal" data-aos="fade-up">
     <div class="about-content">
         <div class="profile-pic-container">
             <img src="profile.jpeg" alt="Shreehari Ballakkuraya Profile Photo">
@@ -64,7 +70,7 @@
 </section>
 
 
-    <section id="skills" class="container reveal">
+    <section id="skills" class="container reveal" data-aos="fade-up">
         <h2>The Developer's Toolkit</h2>
         <div class="skills-grid">
             <div class="skill-card"><i class="fa-brands fa-python"></i><h3>Python & ML</h3><p>TensorFlow, Keras, Pandas, OpenCV</p></div>
@@ -76,7 +82,7 @@
         </div>
     </section>
 
-    <section id="projects" class="reveal">
+    <section id="projects" class="reveal" data-aos="fade-up">
         <div class="container">
             <h2>My Projects</h2>
             <p class="section-subtitle">A gallery of my recent creations, from deep learning models to user-centric mobile applications and in-depth data analyses. Click any project to learn more.</p>
@@ -159,7 +165,7 @@
     <div id="modal-montecarlo" class="modal"><div class="modal-content"><span class="close-button">×</span><h3>Monte Carlo Simulation Using Google sheets and Appscripting</h3><p>This project simulates the dynamics of a T20 cricket match through a custom-built Excel model using ball-by-ball logic integrated with a Monte Carlo simulation. It explores various match scenarios to evaluate player performance, team strategies, and match outcomes.</p><h4>Roles & Responsibilities:</h4><ul><li>Collected and structured player data from multiple sources.</li><li>Built a ball-by-ball simulation model in Excel.</li><li>Incorporated player-specific probabilities to model outcomes.</li><li>Ensured the model's robustness and flexibility for scenario testing.</li></ul></div></div>
 
 
-    <section id="education" class="container reveal">
+    <section id="education" class="container reveal" data-aos="fade-up">
         <h2>Academic Foundation</h2>
         <div class="edu-grid">
             <div class="edu-item"><h3>B.E. - RNS Institute of Technology</h3><p>Bengaluru (2021-2025)</p><p>CGPA: <span class="grade">8.58</span></p></div>
@@ -168,13 +174,19 @@
         </div>
     </section>
 
-    <section id="contact" class="reveal">
+    <section id="contact" class="reveal" data-aos="fade-up">
         <div class="container">
             <div class="contact-content">
                 <h2>Let's Connect & Create</h2>
                 <p class="section-subtitle">Have an interesting project? Looking to collaborate? Or just want to talk tech and data? My inbox is always open.</p>
-<a href="https://mail.google.com/mail/?view=cm&to=ballakkurayashreehari@gmail.com&su=Hello%20Shreehari&body=I%20just%20visited%20your%20portfolio!" target="_blank" class="contact-button">Say Hello</a>
-                <div class="social-links">
+<form id="contact-form" action="https://formspree.io/f/xqalzyod" method="POST" class="contact-form" aria-label="Contact Form">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="email" name="email" placeholder="Your Email" required>
+    <textarea name="message" placeholder="Your Message" required></textarea>
+    <button type="submit" class="contact-button">Send Message</button>
+    <div id="form-status"></div>
+</form> <!-- Replace yourFormID with actual Formspree ID -->
+                <div class="social-links" aria-label="Social Links">
                     <a href="https://www.linkedin.com/in/shreehari-ballakkuraya" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                     <a href="https://github.com/shreehariballakkuraya" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
                 </div>
@@ -185,6 +197,11 @@
     <footer><p>© 2025 Shreehari Ballakkuraya. Crafted with passion, Python, and Kotlin.</p></footer>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- AOS Animate On Scroll JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script src="script.js"></script>
+    <script>
+      AOS.init();
+    </script>
 </body>
 </html>
