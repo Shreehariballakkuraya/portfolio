@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found | Shreehari Ballakkuraya</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--background-color, #0f172a);
+            color: var(--text-color, #e2e8f0);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+        .error-container {
+            text-align: center;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            background: var(--gradient-text, linear-gradient(45deg, #00f5d4, #00bbf9));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .error-message {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+        .home-link {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color, #00f5d4);
+            color: var(--background-color, #0f172a);
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: var(--accent-glow, 0 0 20px rgba(0,245,212,0.6));
+            transition: background 0.2s, color 0.2s, transform 0.2s;
+        }
+        .home-link:hover, .home-link:focus-visible {
+            background: var(--secondary-color, #00bbf9);
+            color: var(--text-color, #e2e8f0);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <div class="error-message">Oops! The page you’re looking for doesn’t exist.</div>
+        <a href="index.html" class="home-link">Go Home</a>
+    </div>
+</body>
+</html>
