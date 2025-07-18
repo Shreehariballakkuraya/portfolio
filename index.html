@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="favicon.png" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shreehari Ballakkuraya | Developer & Data Analyst</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <!-- AOS Animate On Scroll CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
-
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="unlock.css">
 </head>
 <body>
 
@@ -34,43 +33,43 @@
     <section id="hero">
         <div id="particles-js"></div>
         <div class="hero-content">
-            <h1 id="hero-title">Shreehari Ballakkuraya</h1>
+            <h1 id="hero-title"></h1>
             <p class="subtitle" id="hero-subtitle"></p>
         </div>
-        <a href="#about" class="scroll-down">
+        <a href="#about" class="scroll-down" aria-label="Scroll to about section">
             <i class="fa-solid fa-chevron-down"></i>
         </a>
     </section>
-<section id="about" class="container reveal" data-aos="fade-up">
-    <div class="about-content">
-        <div class="profile-pic-container">
-            <img src="profile.jpeg" alt="Shreehari Ballakkuraya Profile Photo">
-        </div>
-        <div class="about-text">
-            <h2>About Me</h2>
-            <p>
-                I’m an enthusiastic and self-driven fresher with a strong interest in deep learning, app development, and data analysis. Through hands-on projects, I’ve developed a solid foundation in building smart applications and turning raw data into meaningful insights. I enjoy learning by doing and continuously strive to improve both my technical and problem-solving skills.
-            </p>
-            <div class="stats-container">
-                <div class="stat-item">
-                    <span class="stat-number" data-target="6">0</span>+
-                    <span class="stat-label">Projects Completed</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" data-target="5">0</span>+
-                    <span class="stat-label">Technologies Learned</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" data-target="100">0</span>%
-                    <span class="stat-label">Learning Mindset</span>
+
+    <section id="about" class="container" data-aos="fade-up">
+        <div class="about-content">
+            <div class="profile-pic-container">
+                <img src="profile.jpeg" alt="Shreehari Ballakkuraya Profile Photo">
+            </div>
+            <div class="about-text">
+                <h2>About Me</h2>
+                <p>
+                    I’m an enthusiastic and self-driven fresher with a strong interest in deep learning, app development, and data analysis. Through hands-on projects, I’ve developed a solid foundation in building smart applications and turning raw data into meaningful insights. I enjoy learning by doing and continuously strive to improve both my technical and problem-solving skills.
+                </p>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="6">0</span>+
+                        <span class="stat-label">Projects Completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="5">0</span>+
+                        <span class="stat-label">Technologies Learned</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="100">0</span>%
+                        <span class="stat-label">Learning Mindset</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-
-    <section id="skills" class="container reveal" data-aos="fade-up">
+    <section id="skills" class="container" data-aos="fade-up">
         <h2>The Developer's Toolkit</h2>
         <div class="skills-grid">
             <div class="skill-card"><i class="fa-brands fa-python"></i><h3>Python & ML</h3><p>TensorFlow, Keras, Pandas, OpenCV</p></div>
@@ -82,90 +81,30 @@
         </div>
     </section>
 
-    <section id="projects" class="reveal" data-aos="fade-up">
+    <section id="projects" data-aos="fade-up">
         <div class="container">
             <h2>My Projects</h2>
             <p class="section-subtitle">A gallery of my recent creations, from deep learning models to user-centric mobile applications and in-depth data analyses. Click any project to learn more.</p>
             <div class="projects-grid">
-                <!-- Project 1: Deepfake Detection -->
-                <div class="project-card" data-modal-target="modal-deepfake">
-                    <div class="project-image project-image-deepfake"></div>
-                    <div class="project-content"><h3>Deepfake Detection</h3><p>A deep learning model using EfficientNet to detect deepfake images with high accuracy.</p><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">TensorFlow</span><span class="tech-tag">EfficientNet</span></div></div>
-                </div>
-                <!-- Project 2: Marriage App -->
-<div class="project-card" data-modal-target="modal-marriage">
-    <div class="project-image project-image-marriage"></div>
-    <div class="project-content">
-        <h3>Marriage Invitation App</h3>
-        <p>
-     An Android app to manage wedding invitations with automated digital invites, event reminders, status tracking, and daily summary reports.
-        </p>
-        <div class="tech-tags">
-            <span class="tech-tag">Kotlin</span>
-            <span class="tech-tag">Android</span>
-            <span class="tech-tag">Firebase</span>
-        </div>
-    </div>
-</div>
-
-                <!-- Project 3: Docuvault  app-->
-                <div class="project-card" data-modal-target="modal-docuvault">
-                    <div class="project-image project-image-docuvault"></div>
-                    <div class="project-content"><h3>DocuVault</h3><p>A secure Android app for managing personal and vehicle documents with cloud backup.</p><div class="tech-tags"><span class="tech-tag">Kotlin</span><span class="tech-tag">Android</span><span class="tech-tag">ML/NLP</span></div></div>
-                </div>
-                <!-- Project 4: Cricket -->
-                 <div class="project-card" data-modal-target="modal-cricket">
-                    <div class="project-image project-image-cricket"></div>
-                    <div class="project-content"><h3> Cricket Data Analysis</h3><p>Uncovering actionable insights from cricket datasets through Exploratory Data Analysis (EDA).</p><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Pandas</span><span class="tech-tag">Looker Studio</span></div></div>
-                </div>
-                <!-- Project 5: Churn -->
-                <div class="project-card" data-modal-target="modal-churn">
-                    <div class="project-image project-image-churn"></div>
-                    <div class="project-content"><h3>Customer Churn Analysis</h3><p>Analyzing customer churn patterns in a telecom dataset to drive retention strategies.</p><div class="tech-tags"><span class="tech-tag">SQL</span><span class="tech-tag">Dashboard</span><span class="tech-tag">Google BigQuery</span></div></div>
-                </div>
-                <!-- Project 6: Monte Carlo -->
-                <div class="project-card" data-modal-target="modal-montecarlo">
-                    <div class="project-image project-image-montecarlo"></div>
-                    <div class="project-content"><h3>T20  Match Simulation</h3><p>Simulating T20 cricket dynamics using a Monte Carlo simulation in Google Sheets.</p><div class="tech-tags"><span class="tech-tag">Google Sheets</span><span class="tech-tag">App  Scripting</span><span class="tech-tag">Monte Carlo</span></div></div>
-                </div>
+                <div class="project-card" data-modal-target="modal-deepfake"><div class="project-image project-image-deepfake"></div><div class="project-content"><h3>Deepfake Detection</h3><p>A deep learning model using EfficientNet to detect deepfake images with high accuracy.</p><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">TensorFlow</span><span class="tech-tag">EfficientNet</span></div></div></div>
+                <div class="project-card" data-modal-target="modal-marriage"><div class="project-image project-image-marriage"></div><div class="project-content"><h3>Marriage Invitation App</h3><p>An Android app to manage wedding invitations with automated digital invites, event reminders, status tracking, and daily summary reports.</p><div class="tech-tags"><span class="tech-tag">Kotlin</span><span class="tech-tag">Android</span><span class="tech-tag">Firebase</span></div></div></div>
+                <div class="project-card" data-modal-target="modal-docuvault"><div class="project-image project-image-docuvault"></div><div class="project-content"><h3>DocuVault</h3><p>A secure Android app for managing personal and vehicle documents with cloud backup.</p><div class="tech-tags"><span class="tech-tag">Kotlin</span><span class="tech-tag">Android</span><span class="tech-tag">ML/NLP</span></div></div></div>
+                <div class="project-card" data-modal-target="modal-cricket"><div class="project-image project-image-cricket"></div><div class="project-content"><h3>Cricket Data Analysis</h3><p>Uncovering actionable insights from cricket datasets through Exploratory Data Analysis (EDA).</p><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Pandas</span><span class="tech-tag">Looker Studio</span></div></div></div>
+                <div class="project-card" data-modal-target="modal-churn"><div class="project-image project-image-churn"></div><div class="project-content"><h3>Customer Churn Analysis</h3><p>Analyzing customer churn patterns in a telecom dataset to drive retention strategies.</p><div class="tech-tags"><span class="tech-tag">SQL</span><span class="tech-tag">Dashboard</span><span class="tech-tag">Google BigQuery</span></div></div></div>
+                <div class="project-card" data-modal-target="modal-montecarlo"><div class="project-image project-image-montecarlo"></div><div class="project-content"><h3>T20 Match Simulation</h3><p>Simulating T20 cricket dynamics using a Monte Carlo simulation in Google Sheets.</p><div class="tech-tags"><span class="tech-tag">Google Sheets</span><span class="tech-tag">App Scripting</span><span class="tech-tag">Monte Carlo</span></div></div></div>
             </div>
         </div>
     </section>
 
     <!-- Project Modals -->
     <div id="modal-deepfake" class="modal"><div class="modal-content"><span class="close-button">×</span><h3>Deepfake Detection Using EfficientNet</h3><p>Developed a deep learning model to detect deepfake images or video frames with high accuracy, leveraging the power of EfficientNet for lightweight and precise feature extraction.</p><h4>Key Features:</h4><ul><li>Robust preprocessing pipeline (frame extraction, face detection).</li><li>Binary classification for Real vs. Deepfake.</li><li>Evaluated with Accuracy, Precision, Recall, F1-Score, and AUC.</li><li>Visualization of confusion matrix and misclassified samples.</li></ul><h4>Project Status:</h4><p>Model training is complete. Documentation is planned. Deployment phase has not started.</p><div class="modal-links"><a href="https://github.com/Shreehariballakkuraya/Deepfake_Detection" target="_blank" class="modal-link">View on GitHub</a></div></div></div>
-<div id="modal-marriage" class="modal">
-    <div class="modal-content">
-        <span class="close-button">×</span>
-        <h3>Marriage Invitation Management App</h3>
-        <p>
-            An Android application built to simplify and automate the process of managing wedding invitations.
-            Includes features for sending digital invites, tracking status, setting reminders, and receiving daily summary reports.
-        </p>
-        <h4>Key Features:</h4>
-        <ul>
-            <li>Automatic sending of wedding invitations via app interface.</li>
-            <li>Track invitation status (pending, confirmed, etc.).</li>
-            <li>Event reminders for RSVP, functions, and key dates.</li>
-            <li>Daily reports summarizing invitation progress.</li>
-            <li>Clean and user-friendly interface for hosts.</li>
-        </ul>
-        <h4>Project Status:</h4>
-        <p>
-            Currently under development. Future plans include optional features like QR-based invite tracking and calendar sync.
-        </p>
-        <div class="modal-links">
-            <a href="https://github.com/Shreehariballakkuraya/marriagemanagement" target="_blank" class="modal-link">View on GitHub</a>
-        </div>
-    </div>
-</div>
+    <div id="modal-marriage" class="modal"><div class="modal-content"><span class="close-button">×</span><h3>Marriage Invitation Management App</h3><p>An Android application built to simplify and automate the process of managing wedding invitations. Includes features for sending digital invites, tracking status, setting reminders, and receiving daily summary reports.</p><h4>Key Features:</h4><ul><li>Automatic sending of wedding invitations via app interface.</li><li>Track invitation status (pending, confirmed, etc.).</li><li>Event reminders for RSVP, functions, and key dates.</li><li>Daily reports summarizing invitation progress.</li><li>Clean and user-friendly interface for hosts.</li></ul><h4>Project Status:</h4><p>Currently under development. Future plans include optional features like QR-based invite tracking and calendar sync.</p><div class="modal-links"><a href="https://github.com/Shreehariballakkuraya/marriagemanagement" target="_blank" class="modal-link">View on GitHub</a></div></div></div>
     <div id="modal-docuvault" class="modal"><div class="modal-content"><span class="close-button">×</span><h3>DocuVault – Secure Document Manager</h3><p>Designed a secure Android application for managing and backing up important personal and vehicle documents, ensuring they are always accessible and safe.</p><h4>Key Features:</h4><ul><li>Upload and store images, PDFs, and scanned documents.</li><li>Smart categorization using ML/NLP (e.g., PAN, DL, Insurance).</li><li>Automatic detection of expiry dates with timely renewal reminders.</li><li>Secure access with biometric or passcode lock and optional cloud sync.</li></ul><h4>Project Status:</h4><p>This is a solo project mentored by Prof. Manjuprakash. Development is ongoing.</p><div class="modal-links"><a href="https://github.com/Shreehariballakkuraya/Shreehariballakkuraya" target="_blank" class="modal-link">View on GitHub</a></div></div></div>
     <div id="modal-cricket" class="modal"><div class="modal-content"><span class="close-button">×</span><h3>The Cricket Code: Cricket Data Analysis</h3><p>This project focused on uncovering actionable insights from cricket datasets through Exploratory Data Analysis (EDA). By leveraging statistical techniques and visual storytelling, the objective was to analyze player performance, team strategies, and match dynamics to identify key patterns and influencing factors in the game.</p><h4>Roles & Responsibilities:</h4><ul><li>Defined project scope, objectives, and deliverables.</li><li>Performed extensive data cleaning and preprocessing for accuracy.</li><li>Applied EDA techniques using Python (Pandas) to discover trends.</li><li>Developed interactive charts and dashboards in Looker Studio.</li></ul></div></div>
     <div id="modal-churn" class="modal"><div class="modal-content"><span class="close-button">×</span><h3>The Customer Compass: Customer Churn Analysis</h3><p>The project focused on analyzing customer churn patterns within a telecommunications dataset to drive data-informed retention strategies. Emphasis was placed on optimizing data cleaning and preprocessing using SQL to ensure accuracy and consistency.</p><h4>Roles & Responsibilities:</h4><ul><li>Performed end-to-end churn analysis using advanced SQL.</li><li>Engineered key performance indicators (KPIs) like Churn Rate and ARPU.</li><li>Conducted churn segmentation based on customer cohorts and tenure.</li><li>Delivered actionable insights through reports and dashboards.</li></ul></div></div>
-    <div id="modal-montecarlo" class="modal"><div class="modal-content"><span class="close-button">×</span><h3>Monte Carlo Simulation Using Google sheets and Appscripting</h3><p>This project simulates the dynamics of a T20 cricket match through a custom-built Excel model using ball-by-ball logic integrated with a Monte Carlo simulation. It explores various match scenarios to evaluate player performance, team strategies, and match outcomes.</p><h4>Roles & Responsibilities:</h4><ul><li>Collected and structured player data from multiple sources.</li><li>Built a ball-by-ball simulation model in Excel.</li><li>Incorporated player-specific probabilities to model outcomes.</li><li>Ensured the model's robustness and flexibility for scenario testing.</li></ul></div></div>
+    <div id="modal-montecarlo" class="modal"><div class="modal-content"><span class="close-button">×</span><h3>Monte Carlo Simulation Using Google Sheets and App Scripting</h3><p>This project simulates the dynamics of a T20 cricket match through a custom-built Excel model using ball-by-ball logic integrated with a Monte Carlo simulation. It explores various match scenarios to evaluate player performance, team strategies, and match outcomes.</p><h4>Roles & Responsibilities:</h4><ul><li>Collected and structured player data from multiple sources.</li><li>Built a ball-by-ball simulation model in Excel.</li><li>Incorporated player-specific probabilities to model outcomes.</li><li>Ensured the model's robustness and flexibility for scenario testing.</li></ul></div></div>
 
-
-    <section id="education" class="container reveal" data-aos="fade-up">
+    <section id="education" class="container" data-aos="fade-up">
         <h2>Academic Foundation</h2>
         <div class="edu-grid">
             <div class="edu-item"><h3>B.E. - RNS Institute of Technology</h3><p>Bengaluru (2021-2025)</p><p>CGPA: <span class="grade">8.58</span></p></div>
@@ -174,34 +113,126 @@
         </div>
     </section>
 
-    <section id="contact" class="reveal" data-aos="fade-up">
+    <section id="contact" data-aos="fade-up">
         <div class="container">
             <div class="contact-content">
                 <h2>Let's Connect & Create</h2>
                 <p class="section-subtitle">Have an interesting project? Looking to collaborate? Or just want to talk tech and data? My inbox is always open.</p>
-<form id="contact-form" action="https://formspree.io/f/xqalzyod" method="POST" class="contact-form" aria-label="Contact Form">
-    <input type="text" name="name" placeholder="Your Name" required>
-    <input type="email" name="email" placeholder="Your Email" required>
-    <textarea name="message" placeholder="Your Message" required></textarea>
-    <button type="submit" class="contact-button">Send Message</button>
-    <div id="form-status"></div>
-</form> <!-- Replace yourFormID with actual Formspree ID -->
-                <div class="social-links" aria-label="Social Links">
-                    <a href="https://www.linkedin.com/in/shreehari-ballakkuraya" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/shreehariballakkuraya" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                <form id="contact-form" action="https://formspree.io/f/your_form_id" method="POST" class="contact-form" aria-label="Contact Form">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <textarea name="message" placeholder="Your Message" required></textarea>
+                    <button type="submit" class="contact-button">Send Message</button>
+                    <div id="form-status"></div>
+                </form>
+                <div class="social-links" aria-label="Social Media Links">
+                    <a href="https://www.linkedin.com/in/shreehari-ballakkuraya" target="_blank" title="LinkedIn" aria-label="LinkedIn Profile"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/shreehariballakkuraya" target="_blank" title="GitHub" aria-label="GitHub Profile"><i class="fab fa-github"></i></a>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer><p>© 2025 Shreehari Ballakkuraya. Crafted with passion, Python, and Kotlin.</p></footer>
+    <div id="unlock-progress" class="unlock-progress" style="display:none;"></div>
+    <section id="fun-interactive" class="container" data-aos="fade-up" style="display:none;">
+        <h2 class="section-title" style="text-align:center;margin-bottom:1.2em;">Fun & Interactive</h2>
+        <!-- DEV ONLY: Skip to Level (remove before deploy) -->
+        <div id="dev-skip-level" style="text-align:center;margin-bottom:1.5em;">
+            <label style="color:#00f5d4;font-weight:bold;">[DEV] Skip to level: </label>
+            <select id="skip-to-level">
+                <option value="">-- Select --</option>
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
+                <option value="4">Level 4</option>
+                <option value="5">Level 5</option>
+                <option value="6">Level 6</option>
+                <option value="7">Level 7</option>
+                <option value="8">Level 8</option>
+                <option value="9">Level 9</option>
+                <option value="10">Level 10</option>
+                <option value="11">Level 11</option>
+                <option value="12">Level 12</option>
+                <option value="13">Level 13</option>
+                <option value="14">Level 14</option>
+            </select>
+            <span style="color:#ff6f61;font-size:0.9em;">[Remove before deploy]</span>
+        </div>
+        <div id="fun-timer" style="font-size:1.3em;font-family:monospace;color:#00f5d4;margin-bottom:1em;">Timer: 00:00</div>
+        <!-- Level 1: Confetti Button -->
+        <div id="fun-level1" style="display:block;">
+            <div class="interactive-widgets">
+                <h3>Interactive Widgets</h3>
+                <button id="confetti-btn" class="fun-btn">Click me for Confetti!</button>
+            </div>
+        </div>
+        <!-- Level 2: Drag Cards -->
+        <div id="fun-level2" style="display:none;">
+            <div class="interactive-widgets">
+                <div id="draggable-area">
+                    <div class="draggable-card" draggable="true">Drag me!</div>
+                    <div class="draggable-card" draggable="true">Or drag me!</div>
+                </div>
+                <div id="animated-bg"></div>
+            </div>
+        </div>
+        <!-- Level 3: Quiz -->
+        <div id="fun-level3" style="display:none;">
+            <div class="logic-puzzle">
+                <h3>Mini Quiz Puzzle</h3>
+                <div id="quiz-container"></div>
+            </div>
+        </div>
+        <!-- Level 4: Memory Game -->
+        <div id="fun-level4" style="display:none;">
+            <div id="memory-game-root"></div>
+        </div>
+        <!-- Level 5: Simon Says -->
+        <div id="fun-level5" style="display:none;">
+            <div id="simon-says-root"></div>
+        </div>
+        <!-- Level 6: Typing Challenge -->
+        <div id="fun-level6" style="display:none;">
+            <div class="game-placeholder"><h3>Typing Challenge</h3><button class="complete-level-btn" data-next="7">Complete</button></div>
+        </div>
+        <!-- Level 7: Logic Puzzle -->
+        <div id="fun-level7" style="display:none;">
+            <div class="game-placeholder"><h3>Logic Puzzle</h3><button class="complete-level-btn" data-next="8">Complete</button></div>
+        </div>
+        <!-- Level 8: Pixel Art -->
+        <div id="fun-level8" style="display:none;">
+            <div class="game-placeholder"><h3>Pixel Art</h3><button class="complete-level-btn" data-next="9">Complete</button></div>
+        </div>
+        <!-- Level 9: Trivia Wheel -->
+        <div id="fun-level9" style="display:none;">
+            <div class="game-placeholder"><h3>Trivia Wheel</h3><button class="complete-level-btn" data-next="10">Complete</button></div>
+        </div>
+        <!-- Level 10: Platformer Game -->
+        <div id="fun-level10" style="display:none;">
+            <div class="game-placeholder"><h3>Platformer Game</h3><button class="complete-level-btn" data-next="11">Complete</button></div>
+        </div>
+        <!-- Level 11: Code Debugging -->
+        <div id="fun-level11" style="display:none;">
+            <div class="game-placeholder"><h3>Code Debugging</h3><button class="complete-level-btn" data-next="12">Complete</button></div>
+        </div>
+        <!-- Level 12: Emoji Guessing -->
+        <div id="fun-level12" style="display:none;">
+            <div class="game-placeholder"><h3>Emoji Guessing</h3><button class="complete-level-btn" data-next="13">Complete</button></div>
+        </div>
+        <!-- Level 13: Secret Command -->
+        <div id="fun-level13" style="display:none;">
+            <div class="game-placeholder"><h3>Secret Command</h3><button class="complete-level-btn" data-next="14">Complete</button></div>
+        </div>
+
+    </section>
+
+    <div id="unlock-toast" class="unlock-toast"></div>
+    <footer>
+        <p>© 2025 Shreehari Ballakkuraya. Crafted with passion, Python, and Kotlin.</p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <!-- AOS Animate On Scroll JS -->
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script src="script.js"></script>
-    <script>
-      AOS.init();
-    </script>
 </body>
 </html>
