@@ -277,7 +277,6 @@ function showPuzzle(onQuizComplete) {
 
 
 
-
 // --- Initialize Animate on Scroll ---
 AOS.init({
     duration: 1000,
@@ -345,6 +344,9 @@ function handleFunTimeUp() {
         // Always initialize games when their level is shown
         if (n === 4) initMemoryGame();
         if (n === 5) initSimonSays();
+        if (n === 6) initTypingChallenge();
+        if (n === 7) initLogicPuzzle();
+        if (n === 8) initPixelArt();
     }
     window.showLevel = showLevel;
     // LEVEL 1: Confetti clicks
@@ -489,6 +491,249 @@ function handleFunTimeUp() {
         });
     }
 
+
+    // LEVEL 8: Pixel Art Coloring
+    function initPixelArt() {
+        const root = document.getElementById('pixel-art-root');
+        if (!root) return;
+        root.innerHTML = '';
+        // Define a simple pattern (6x6 heart)
+        const pattern = [
+            [0,1,1,1,1,0],
+            [1,2,2,2,2,1],
+            [2,2,2,2,2,2],
+            [2,2,2,2,2,2],
+            [0,2,2,2,2,0],
+            [0,0,2,2,0,0]
+        ];
+        const colors = ['#181f2a','#ff6f61','#ffd166']; // 0=bg, 1=red, 2=yellow
+        const colorNames = ['Background','Red','Yellow'];
+        const size = 6;
+        let userGrid = Array(size).fill().map(()=>Array(size).fill(0));
+        // Palette
+        const palette = document.createElement('div');
+        palette.style.margin = '0.7em auto 1em auto';
+        palette.style.display = 'flex';
+        palette.style.justifyContent = 'center';
+        let selected = 1;
+        colors.forEach((col,i) => {
+            const btn = document.createElement('button');
+            btn.style.width = '32px';
+            btn.style.height = '32px';
+            btn.style.margin = '0 8px';
+            btn.style.borderRadius = '7px';
+            btn.style.border = i === selected ? '3px solid #00f5d4' : '2px solid #fff';
+            btn.style.background = col;
+            btn.title = colorNames[i];
+            btn.setAttribute('aria-label', colorNames[i]);
+            btn.addEventListener('click',()=>{
+                selected = i;
+                Array.from(palette.children).forEach((b,idx)=>b.style.border = idx===selected?'3px solid #00f5d4':'2px solid #fff');
+            });
+            palette.appendChild(btn);
+        });
+        root.appendChild(palette);
+        // Reference pattern
+        const ref = document.createElement('div');
+        ref.style.display = 'inline-block';
+        ref.style.margin = '0 auto 1em auto';
+        ref.style.padding = '8px';
+        ref.style.border = '2px dashed #00f5d4';
+        ref.style.background = '#222';
+        ref.innerHTML = '<b>Reference:</b><br>' + pattern.map(row=>row.map(idx=>`<span style="display:inline-block;width:18px;height:18px;background:${colors[idx]};margin:1px;border-radius:3px;"></span>`).join('')).join('<br>');
+        root.appendChild(ref);
+        // User grid
+        const board = document.createElement('div');
+        board.style.display = 'grid';
+        board.style.gridTemplateColumns = `repeat(${size}, 28px)`;
+        board.style.gridGap = '4px';
+        board.style.margin = '0 auto 1.1em auto';
+        for (let r = 0; r < size; r++) {
+            for (let c = 0; c < size; c++) {
+                const cell = document.createElement('button');
+                cell.style.width = '28px';
+                cell.style.height = '28px';
+                cell.style.borderRadius = '5px';
+                cell.style.border = '2px solid #fff';
+                cell.style.background = colors[userGrid[r][c]];
+                cell.setAttribute('aria-label', `Cell ${r+1},${c+1}`);
+                cell.tabIndex = 0;
+                cell.addEventListener('click',()=>{
+                    userGrid[r][c] = selected;
+                    cell.style.background = colors[selected];
+                    checkWin();
+                });
+                board.appendChild(cell);
+            }
+        }
+        root.appendChild(board);
+        function checkWin() {
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    if (userGrid[r][c] !== pattern[r][c]) return;
+                }
+            }
+            showWin();
+        }
+        function showWin() {
+            const msg = document.createElement('div');
+            msg.textContent = 'Pixel Art Complete! 🎉';
+            msg.style.margin = '1em auto';
+            msg.style.fontWeight = 'bold';
+            msg.style.color = '#00f5d4';
+            msg.style.fontSize = '1.2em';
+            root.appendChild(msg);
+            addFunCountdown(60);
+            setTimeout(() => {
+                showLevel(9);
+            }, 1400);
+        }
+    }
+
+    // LEVEL 7: Logic Puzzle (Lights Out)
+    function initLogicPuzzle() {
+        const root = document.getElementById('logic-puzzle-root');
+        if (!root) return;
+        root.innerHTML = '';
+        const size = 3;
+        let grid = Array(size * size).fill(0).map(() => Math.random() > 0.5 ? 1 : 0);
+        function render() {
+            root.innerHTML = '';
+            const board = document.createElement('div');
+            board.style.display = 'grid';
+            board.style.gridTemplateColumns = `repeat(${size}, 50px)`;
+            board.style.gridGap = '10px';
+            board.style.margin = '1.5em auto';
+            board.style.justifyContent = 'center';
+            for (let i = 0; i < size * size; i++) {
+                const btn = document.createElement('button');
+                btn.style.width = '50px';
+                btn.style.height = '50px';
+                btn.style.borderRadius = '8px';
+                btn.style.border = '2px solid #00f5d4';
+                btn.style.background = grid[i] ? '#00f5d4' : '#181f2a';
+                btn.style.boxShadow = grid[i] ? '0 0 18px #00f5d4' : '';
+                btn.setAttribute('aria-label', `Cell ${i+1}`);
+                btn.tabIndex = 0;
+                btn.addEventListener('click', () => {
+                    toggle(i);
+                    render();
+                    if (grid.every(v => v === 0)) {
+                        board.style.pointerEvents = 'none';
+                        showWin();
+                    }
+                });
+                board.appendChild(btn);
+            }
+            root.appendChild(board);
+        }
+        function toggle(idx) {
+            const neighbors = [idx, idx-size, idx+size];
+            if (idx % size !== 0) neighbors.push(idx-1);
+            if ((idx+1) % size !== 0) neighbors.push(idx+1);
+            for (const n of neighbors) {
+                if (n >= 0 && n < size*size) grid[n] = grid[n] ? 0 : 1;
+            }
+        }
+        function showWin() {
+            const msg = document.createElement('div');
+            msg.textContent = 'Puzzle Solved! 🎉';
+            msg.style.margin = '1em auto';
+            msg.style.fontWeight = 'bold';
+            msg.style.color = '#00f5d4';
+            msg.style.fontSize = '1.2em';
+            root.appendChild(msg);
+            addFunCountdown(60);
+            setTimeout(() => {
+                showLevel(8);
+            }, 1300);
+        }
+        render();
+    }
+
+    // LEVEL 6: Typing Challenge
+    function initTypingChallenge() {
+        const typingRoot = document.getElementById('typing-challenge-root');
+        if (!typingRoot) return;
+        typingRoot.innerHTML = '';
+        const sentences = [
+            'The quick brown fox jumps over the lazy dog.',
+            'JavaScript makes web pages interactive.',
+            'Typing fast is a useful skill.',
+            'Practice makes perfect!',
+            'Cascade is your coding copilot.'
+        ];
+        const sentence = sentences[Math.floor(Math.random() * sentences.length)];
+        const container = document.createElement('div');
+        container.style.margin = '1.2em auto';
+        container.style.maxWidth = '500px';
+        container.style.padding = '1.2em';
+        container.style.background = '#181f2a';
+        container.style.borderRadius = '10px';
+        container.style.boxShadow = '0 0 18px #00f5d4, 0 0 3px #000';
+        container.style.textAlign = 'center';
+        const prompt = document.createElement('div');
+        prompt.style.fontSize = '1.1em';
+        prompt.style.letterSpacing = '0.03em';
+        prompt.style.marginBottom = '1em';
+        prompt.style.fontFamily = 'monospace';
+        prompt.innerHTML = sentence.split('').map((ch,i) => `<span data-idx="${i}" style="padding:1px 2px;">${ch === ' ' ? '&nbsp;' : ch}</span>`).join('');
+        container.appendChild(prompt);
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.autocomplete = 'off';
+        input.spellcheck = false;
+        input.style.width = '100%';
+        input.style.fontSize = '1.1em';
+        input.style.padding = '0.7em';
+        input.style.border = '2px solid #00f5d4';
+        input.style.borderRadius = '8px';
+        input.style.marginBottom = '1em';
+        input.style.fontFamily = 'monospace';
+        container.appendChild(input);
+        const status = document.createElement('div');
+        status.style.marginTop = '0.8em';
+        status.style.fontWeight = 'bold';
+        container.appendChild(status);
+        typingRoot.appendChild(container);
+        let startTime = null;
+        input.addEventListener('input', function() {
+            if (startTime === null) startTime = Date.now();
+            // Highlight
+            for (let i = 0; i < sentence.length; i++) {
+                const span = prompt.querySelector(`[data-idx="${i}"]`);
+                if (!span) continue;
+                if (this.value[i] == null) {
+                    span.style.background = '';
+                    span.style.color = '';
+                } else if (this.value[i] === sentence[i]) {
+                    span.style.background = '#00f5d4';
+                    span.style.color = '#181f2a';
+                } else {
+                    span.style.background = '#ff5e5e';
+                    span.style.color = '#fff';
+                }
+            }
+            // On complete
+            if (this.value === sentence) {
+                const elapsed = (Date.now() - startTime) / 1000;
+                const words = sentence.trim().split(/\s+/).length;
+                const wpm = Math.round(words / (elapsed / 60));
+                let correctChars = 0;
+                for (let i = 0; i < sentence.length; i++) {
+                    if (this.value[i] === sentence[i]) correctChars++;
+                }
+                const accuracy = Math.round((correctChars / sentence.length) * 100);
+                status.innerHTML = `Completed in <b>${elapsed.toFixed(2)}</b> seconds!<br>WPM: <b>${wpm}</b> &nbsp; Accuracy: <b>${accuracy}%</b> 🎉`;
+                input.disabled = true;
+                addFunCountdown(60);
+                setTimeout(() => {
+                    showLevel(7);
+                }, 1600);
+            }
+        });
+        setTimeout(() => input.focus(), 200);
+    }
 
     // LEVEL 5: Simon Says
     function initSimonSays() {
