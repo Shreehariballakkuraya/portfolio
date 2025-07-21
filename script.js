@@ -347,6 +347,8 @@ function handleFunTimeUp() {
         if (n === 6) initTypingChallenge();
         if (n === 7) initLogicPuzzle();
         if (n === 8) initPixelArt();
+        if (n === 9) initTriviaWheel();
+        if (n === 10) initPlatformer();
     }
     window.showLevel = showLevel;
     // LEVEL 1: Confetti clicks
@@ -491,6 +493,220 @@ function handleFunTimeUp() {
         });
     }
 
+
+    // LEVEL 9: Trivia Wheel
+    function initTriviaWheel() {
+        const root = document.getElementById('trivia-wheel-root');
+        if (!root) return;
+        root.innerHTML = '';
+        const questions = [
+            {q:'What is the capital of France?', a:'Paris'},
+            {q:'Who wrote "Hamlet"?', a:'Shakespeare'},
+            {q:'What is 9 x 7?', a:'63'},
+            {q:'What planet is known as the Red Planet?', a:'Mars'},
+            {q:'What is the chemical symbol for water?', a:'H2O'},
+            {q:'Who painted the Mona Lisa?', a:'Da Vinci'},
+            {q:'What is the largest mammal?', a:'Blue whale'},
+            {q:'What is the square root of 64?', a:'8'}
+        ];
+        // Wheel UI
+        const wheelBtn = document.createElement('button');
+        wheelBtn.textContent = 'SPIN THE WHEEL!';
+        wheelBtn.style.fontSize = '1.2em';
+        wheelBtn.style.padding = '1em 2em';
+        wheelBtn.style.background = '#00f5d4';
+        wheelBtn.style.color = '#181f2a';
+        wheelBtn.style.border = '3px solid #fff';
+        wheelBtn.style.borderRadius = '14px';
+        wheelBtn.style.margin = '1.5em auto 1em auto';
+        wheelBtn.style.display = 'block';
+        wheelBtn.style.fontWeight = 'bold';
+        root.appendChild(wheelBtn);
+        const qDiv = document.createElement('div');
+        qDiv.style.margin = '1.2em auto';
+        qDiv.style.fontSize = '1.1em';
+        qDiv.style.fontWeight = 'bold';
+        qDiv.style.textAlign = 'center';
+        root.appendChild(qDiv);
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.style.fontSize = '1.1em';
+        input.style.padding = '0.6em';
+        input.style.margin = '0.7em auto';
+        input.style.display = 'block';
+        input.style.width = '80%';
+        input.style.border = '2px solid #00f5d4';
+        input.style.borderRadius = '7px';
+        input.style.textAlign = 'center';
+        input.style.fontFamily = 'monospace';
+        input.style.visibility = 'hidden';
+        root.appendChild(input);
+        const submit = document.createElement('button');
+        submit.textContent = 'Submit';
+        submit.style.display = 'none';
+        submit.style.margin = '0.5em auto';
+        submit.style.padding = '0.7em 1.5em';
+        submit.style.fontWeight = 'bold';
+        submit.style.background = '#00f5d4';
+        submit.style.color = '#181f2a';
+        submit.style.border = '2px solid #fff';
+        submit.style.borderRadius = '7px';
+        root.appendChild(submit);
+        const status = document.createElement('div');
+        status.style.margin = '1em auto 0 auto';
+        status.style.textAlign = 'center';
+        status.style.fontWeight = 'bold';
+        root.appendChild(status);
+        let picked = null;
+        wheelBtn.onclick = function() {
+            picked = questions[Math.floor(Math.random()*questions.length)];
+            qDiv.textContent = picked.q;
+            input.value = '';
+            input.style.visibility = 'visible';
+            submit.style.display = 'inline-block';
+            input.focus();
+            status.textContent = '';
+        };
+        submit.onclick = function() {
+            if (!picked) return;
+            if (input.value.trim().toLowerCase() === picked.a.toLowerCase()) {
+                status.textContent = 'Correct! 🎉';
+                status.style.color = '#00f5d4';
+                addFunCountdown(60);
+                setTimeout(()=>{ showLevel(10); }, 1200);
+            } else {
+                status.textContent = 'Try again!';
+                status.style.color = '#ff6f61';
+            }
+        };
+    }
+
+    // LEVEL 10: Platformer Mini-Game
+    function initPlatformer() {
+        const root = document.getElementById('platformer-root');
+        if (!root) return;
+        root.innerHTML = '';
+        // Simple runner: press space/arrow-up to jump over obstacles
+        const container = document.createElement('div');
+        container.style.position = 'relative';
+        container.style.width = '600px';
+        container.style.height = '180px';
+        container.style.margin = '2em auto';
+        container.style.background = '#222';
+        container.style.border = '2px solid #00f5d4';
+        container.style.borderRadius = '12px';
+        root.appendChild(container);
+        // Player
+        const player = document.createElement('div');
+        player.style.position = 'absolute';
+        player.style.left = '60px';
+        player.style.bottom = '28px';
+        player.style.width = '40px';
+        player.style.height = '40px';
+        player.style.background = '#00f5d4';
+        player.style.borderRadius = '50%';
+        player.style.boxShadow = '0 0 8px #00f5d4';
+        container.appendChild(player);
+        // Obstacle
+        const obs = document.createElement('div');
+        obs.style.position = 'absolute';
+        obs.style.left = '540px'; // start at far right
+        obs.style.bottom = '28px';
+        obs.style.width = '38px';
+        obs.style.height = '54px';
+        obs.style.background = '#ff6f61';
+        obs.style.borderRadius = '8px';
+        obs.style.boxShadow = '0 0 8px #ff6f61';
+        container.appendChild(obs);
+        // Ground
+        const ground = document.createElement('div');
+        ground.style.position = 'absolute';
+        ground.style.left = '0';
+        ground.style.bottom = '0';
+        ground.style.width = '100%';
+        ground.style.height = '28px';
+        ground.style.background = '#444';
+        ground.style.borderRadius = '0 0 14px 14px';
+        container.appendChild(ground);
+        // Jump logic
+        let jumping = false;
+        let y = 0;
+        let vy = 0;
+        let gravity = -2.3;
+        let jumpPower = 32;
+        function jump() {
+            if (!jumping) {
+                vy = jumpPower;
+                jumping = true;
+            }
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' || e.code === 'ArrowUp') jump();
+        });
+        container.addEventListener('click', jump);
+        // Obstacle movement
+        let obsX = 540;
+        let speed = 5.2;
+        let running = true;
+        function frame() {
+            if (!running) return;
+            // Player physics
+            vy += gravity;
+            y += vy;
+            if (y < 0) { y = 0; vy = 0; jumping = false; }
+            player.style.bottom = (18 + y) + 'px';
+            // Obstacle movement (leftwards)
+            obsX -= speed;
+            if (obsX < -28) { obsX = 340 + Math.random()*40; speed += 0.2; }
+            obs.style.left = obsX + 'px';
+            // Collision
+            // Player at left: left=40px, width=32; obstacle: obsX, width=28
+            if (obsX < 40+32 && obsX+28 > 40 && y < 18+36 && y+32 > 18) {
+                running = false;
+                player.style.background = '#ff5e5e';
+                showFail();
+                return;
+            }
+            requestAnimationFrame(frame);
+        }
+        function showFail() {
+            const msg = document.createElement('div');
+            msg.textContent = 'Oops! Try again.';
+            msg.style.position = 'absolute';
+            msg.style.left = '50%';
+            msg.style.top = '35%';
+            msg.style.transform = 'translate(-50%,-50%)';
+            msg.style.color = '#ff6f61';
+            msg.style.fontWeight = 'bold';
+            msg.style.fontSize = '1.2em';
+            msg.style.background = '#fff';
+            msg.style.padding = '0.7em 2em';
+            msg.style.borderRadius = '8px';
+            container.appendChild(msg);
+            setTimeout(()=>{ initPlatformer(); }, 1200);
+        }
+        function showWin() {
+            running = false;
+            addFunCountdown(60);
+            const msg = document.createElement('div');
+            msg.textContent = 'You Win! 🎉';
+            msg.style.position = 'absolute';
+            msg.style.left = '50%';
+            msg.style.top = '35%';
+            msg.style.transform = 'translate(-50%,-50%)';
+            msg.style.color = '#00f5d4';
+            msg.style.fontWeight = 'bold';
+            msg.style.fontSize = '1.2em';
+            msg.style.background = '#fff';
+            msg.style.padding = '0.7em 2em';
+            msg.style.borderRadius = '8px';
+            container.appendChild(msg);
+            setTimeout(()=>{ showLevel(11); }, 1300);
+        }
+        // Win condition: survive 12 seconds
+        setTimeout(()=>{ if (running) showWin(); }, 12000);
+        frame();
+    }
 
     // LEVEL 8: Pixel Art Coloring
     function initPixelArt() {
