@@ -1,5 +1,172 @@
 console.log('[FUN] Script loaded');
 
+// === SOUND EFFECTS ===
+const SOUND_PATHS = {
+    success: 'sounds/success.mp3',
+    error: 'sounds/error.mp3',
+    celebration: 'sounds/celebration.mp3'
+};
+const SOUNDS = {};
+let funMuted = false;
+
+// Load mute state from localStorage
+try {
+    funMuted = localStorage.getItem('funMuted') === 'true';
+} catch(e) { funMuted = false; }
+
+function loadSounds() {
+    for (const [key, url] of Object.entries(SOUND_PATHS)) {
+        const audio = new Audio(url);
+        audio.preload = 'auto';
+        SOUNDS[key] = audio;
+    }
+}
+function playSound(type) {
+    if (funMuted) return;
+    const snd = SOUNDS[type];
+    if (snd) {
+        try {
+            snd.currentTime = 0;
+            snd.play();
+        } catch(e) {/* ignore */}
+    }
+}
+function toggleMute() {
+    funMuted = !funMuted;
+    try { localStorage.setItem('funMuted', funMuted); } catch(e){}
+    updateMuteBtn();
+}
+function updateMuteBtn() {
+    let btn = document.getElementById('fun-mute-btn');
+    if (!btn) return;
+    btn.textContent = funMuted ? '🔇' : '🔊';
+    btn.title = funMuted ? 'Unmute Sounds' : 'Mute Sounds';
+}
+// Add persistent progress bar
+function addProgressIndicator() {
+    if (document.getElementById('fun-progress-indicator')) return;
+    const bar = document.createElement('div');
+    bar.id = 'fun-progress-indicator';
+    bar.style.position = 'fixed';
+    bar.style.top = '18px';
+    bar.style.left = '22px';
+    bar.style.zIndex = 9999;
+    bar.style.background = '#232946';
+    bar.style.color = '#ffdf6e';
+    bar.style.borderRadius = '10px';
+    bar.style.padding = '8px 22px';
+    bar.style.fontWeight = 'bold';
+    bar.style.fontFamily = 'monospace';
+    bar.style.fontSize = '1.1em';
+    bar.style.boxShadow = '0 2px 10px #00f5d433';
+    document.body.appendChild(bar);
+}
+function updateProgressIndicator(level, total) {
+    const bar = document.getElementById('fun-progress-indicator');
+    if (bar) {
+        bar.textContent = `Level ${level} of ${total}`;
+    }
+}
+// Add mute button to UI
+function addMuteBtn() {
+    if (document.getElementById('fun-mute-btn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'fun-mute-btn';
+    btn.style.position = 'fixed';
+    btn.style.top = '18px';
+    btn.style.right = '22px';
+    btn.style.zIndex = 9999;
+    btn.style.background = '#232946';
+    btn.style.color = '#00f5d4';
+    btn.style.border = 'none';
+    btn.style.borderRadius = '50%';
+    btn.style.width = '44px';
+    btn.style.height = '44px';
+    btn.style.fontSize = '1.5em';
+    btn.style.cursor = 'pointer';
+    btn.style.boxShadow = '0 2px 10px #00f5d466';
+    btn.style.transition = 'background 0.2s';
+    btn.onclick = toggleMute;
+    document.body.appendChild(btn);
+    updateMuteBtn();
+}
+// Initialize sounds, mute button, and progress indicator on DOMContentLoaded
+let PLAYER_NAME = '';
+const LEVEL_TIMINGS = [];
+let CURRENT_LEVEL_START = null;
+
+function showNamePrompt() {
+    // Prevent duplicate
+    if (document.getElementById('fun-name-modal')) return;
+    const modalBg = document.createElement('div');
+    modalBg.id = 'fun-name-modal';
+    modalBg.style.position = 'fixed';
+    modalBg.style.top = '0';
+    modalBg.style.left = '0';
+    modalBg.style.width = '100vw';
+    modalBg.style.height = '100vh';
+    modalBg.style.background = 'rgba(0,0,0,0.7)';
+    modalBg.style.display = 'flex';
+    modalBg.style.alignItems = 'center';
+    modalBg.style.justifyContent = 'center';
+    modalBg.style.zIndex = '10001';
+
+    const modal = document.createElement('div');
+    modal.style.background = '#232946';
+    modal.style.color = '#ffdf6e';
+    modal.style.padding = '2em 2.5em';
+    modal.style.borderRadius = '18px';
+    modal.style.boxShadow = '0 0 32px #00f5d4bb';
+    modal.style.textAlign = 'center';
+    modal.style.fontFamily = 'monospace';
+    modal.innerHTML = `
+        <h2 style='color:#00f5d4;margin-bottom:0.5em;'>Welcome!</h2>
+        <div style='margin-bottom:1em;font-size:1.1em;'>Enter your name to begin:</div>
+        <input id='fun-name-input' type='text' maxlength='24' style='font-size:1.1em;padding:0.5em 1em;border-radius:8px;border:2px solid #00f5d4;text-align:center;width:90%;margin-bottom:1em;' placeholder='Your name'>
+        <br>
+        <button id='fun-name-submit' style='margin-top:1em;padding:0.7em 2em;font-size:1.1em;background:#00f5d4;color:#232946;border:none;border-radius:8px;font-weight:bold;cursor:pointer;'>Start Game</button>
+    `;
+    modalBg.appendChild(modal);
+    document.body.appendChild(modalBg);
+
+    const input = document.getElementById('fun-name-input');
+    const btn = document.getElementById('fun-name-submit');
+    input.focus();
+    btn.onclick = function() {
+        const val = input.value.trim();
+        if (val.length > 0) {
+            PLAYER_NAME = val;
+            modalBg.remove();
+            startFunGame();
+        } else {
+            input.style.borderColor = '#ff6f61';
+            input.placeholder = 'Please enter your name';
+        }
+    };
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') btn.click();
+    });
+}
+
+function startFunGame() {
+    showLevel(1);
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        loadSounds();
+        addMuteBtn();
+        addProgressIndicator();
+        showNamePrompt();
+    });
+} else {
+    loadSounds();
+    addMuteBtn();
+    addProgressIndicator();
+    showNamePrompt();
+}
+
+
 // === DEBUGGING UTILITIES ===
 const DEBUG = {
     enabled: !window.RELEASE_BUILD,
@@ -237,9 +404,11 @@ document.addEventListener('DOMContentLoaded', function() {
             result.className = 'quiz-result';
             if (selectedIdx === q.correct) {
                 result.textContent = 'Correct! 🎉';
+                playSound('success');
                 score++;
             } else {
                 result.textContent = 'Wrong answer.';
+                playSound('error');
             }
             quizContainer.appendChild(result);
             setTimeout(() => {
@@ -299,9 +468,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function handleFunTimeUp() {
         // Hide all levels and show message
+        // --- Animated Level Transitions ---
+        // Hide all levels with fade-out
         for (let i = 1; i <= 14; i++) {
             const el = document.getElementById('fun-level'+i);
-            if (el) el.style.display = 'none';
+            if (el) {
+                el.classList.remove('fade-in');
+                if (el.style.display !== 'none') {
+                    el.classList.add('fade-out');
+                    setTimeout(() => {
+                        el.style.display = 'none';
+                        el.classList.remove('fade-out');
+                    }, 320);
+                } else {
+                    el.style.display = 'none';
+                }
+            }
+        }
+        // Show current level with fade-in after delay
+        const levelEl = document.getElementById('fun-level1');
+        if (levelEl) {
+            setTimeout(() => {
+                levelEl.style.display = 'block';
+                levelEl.classList.add('fade-in');
+                setTimeout(() => levelEl.classList.remove('fade-in'), 420);
+            }, 340);
         }
         const timerEl = document.getElementById('fun-timer');
         if (timerEl) timerEl.textContent = "Time's up!";
@@ -429,6 +620,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const userCode = textarea.value;
                 if (expectedFixed.test(userCode)) {
                     status.textContent = 'Correct! Bug fixed. 🎉';
+                    playSound('success');
                     status.style.color = '#00f5d4';
                     // Show the correct answer
                     const answerDiv = document.createElement('div');
@@ -475,6 +667,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }, 5200);
                 } else {
                     status.textContent = 'Still buggy! Try again.';
+                    playSound('error');
                     status.style.color = '#ff5e5e';
                 }
             };
@@ -483,9 +676,53 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => textarea.focus(), 200);
         }
         function showLevel(n) {
-            DEBUG.performance.start(`showLevel${n}`);
+            // Show summary overlay if game is finished
+            if (n > totalLevels) {
+                showSummaryOverlay();
+                return;
+            }
+            // Track timing for previous level
+            if (typeof CURRENT_LEVEL_START === 'number' && LEVEL_TIMINGS.length < n-1 && n > 1) {
+                const now = Date.now();
+                LEVEL_TIMINGS.push({
+                    level: n-1,
+                    start: CURRENT_LEVEL_START,
+                    end: now,
+                    duration: (now - CURRENT_LEVEL_START) / 1000
+                });
+            }
+            // Start timing for new level
+            if (n >= 1 && n <= totalLevels) {
+                CURRENT_LEVEL_START = Date.now();
+            }
+            // Hide all levels and show only the nth level
+            for (let i = 1; i <= totalLevels; i++) {
+                const el = document.getElementById('fun-level'+i);
+                if (el) {
+                    el.classList.remove('fade-in');
+                    if (el.style.display !== 'none') {
+                        el.classList.add('fade-out');
+                        setTimeout(() => {
+                            el.style.display = 'none';
+                            el.classList.remove('fade-out');
+                        }, 320);
+                    } else {
+                        el.style.display = 'none';
+                    }
+                } else {
+                    DEBUG.warn(`Level container not found: fun-level${i}`);
+                }
+            }
+            // Show current level with fade-in after delay
+            const levelEl = document.getElementById('fun-level'+n);
+            if (levelEl) {
+                setTimeout(() => {
+                    levelEl.style.display = 'block';
+                    levelEl.classList.add('fade-in');
+                    setTimeout(() => levelEl.classList.remove('fade-in'), 420);
+                }, 340);
+            }
             // Update progress bar and label
-            const totalLevels = 14;
             const progressLabel = document.getElementById('fun-level-label');
             const progressBar = document.getElementById('fun-progress-bar');
             if (progressLabel && progressBar && n >= 1 && n <= totalLevels) {
@@ -494,39 +731,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 progressBar.style.width = pct + '%';
             }
 
-            
-            if (typeof n !== 'number' || isNaN(n) || n < 1) {
-                DEBUG.error(`showLevel called with invalid value: ${n} (type: ${typeof n})`);
-                return;
-            }
-            
-            if (n > totalLevels) {
-                DEBUG.warn(`showLevel called with level ${n} which exceeds totalLevels (${totalLevels})`);
-            }
-            
-            DEBUG.log(`Showing level ${n}`);
-            
-            let visibleCount = 0;
-            let hiddenCount = 0;
-            
-            for (let i = 1; i <= totalLevels; i++) {
-                const el = safeSelect(`#fun-level${i}`);
-                if (el) {
-                    const shouldShow = (i === n);
-                    el.style.display = shouldShow ? 'block' : 'none';
-                    if (shouldShow) {
-                        visibleCount++;
-                        DEBUG.log(`Level ${i} container made visible`);
-                    } else {
-                        hiddenCount++;
-                    }
-                } else {
-                    DEBUG.warn(`Level container not found: fun-level${i}`);
-                }
-            }
-            
-            DEBUG.log(`Level visibility updated: ${visibleCount} visible, ${hiddenCount} hidden`);
-            
             // Initialize games with error handling
             const gameInitializers = {
                 4: { name: 'Memory Game', init: initMemoryGame },
@@ -540,7 +744,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 14: { name: 'Celebration', init: initCelebration }
             };
 
-            
+            // Initialize game logic
             if (gameInitializers[n]) {
                 const game = gameInitializers[n];
                 DEBUG.log(`Initializing ${game.name} for level ${n}`);
@@ -553,8 +757,94 @@ document.addEventListener('DOMContentLoaded', function() {
                     DEBUG.error(`Failed to initialize ${game.name}:`, error);
                 }
             }
-            
-            DEBUG.performance.end(`showLevel${n}`);
+        }
+        // Summary overlay at the end
+        function showSummaryOverlay() {
+            // Prevent duplicate overlays
+            if (typeof CURRENT_LEVEL_START === 'number' && LEVEL_TIMINGS.length < totalLevels) {
+                const now = Date.now();
+                LEVEL_TIMINGS.push({
+                    level: totalLevels,
+                    start: CURRENT_LEVEL_START,
+                    end: now,
+                    duration: (now - CURRENT_LEVEL_START) / 1000
+                });
+            }
+            if (document.getElementById('fun-summary-overlay')) return;
+            const overlay = document.createElement('div');
+            overlay.id = 'fun-summary-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = 0;
+            overlay.style.left = 0;
+            overlay.style.width = '100vw';
+            overlay.style.height = '100vh';
+            overlay.style.background = 'rgba(0,0,0,0.85)';
+            overlay.style.display = 'flex';
+            overlay.style.flexDirection = 'column';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.zIndex = 10000;
+            overlay.style.color = '#ffdf6e';
+            overlay.style.fontFamily = 'monospace';
+
+            let timeLeft = typeof funCountdown !== 'undefined' ? funCountdown : 0;
+            const summaryBox = document.createElement('div');
+            summaryBox.style.background = '#232946';
+            summaryBox.style.padding = '2.5em 3em';
+            summaryBox.style.borderRadius = '18px';
+            summaryBox.style.boxShadow = '0 0 32px #00f5d4bb';
+            summaryBox.style.textAlign = 'center';
+            // Per-level timing table
+            let timingsTable = '<table style="margin:1.5em auto 1em auto;border-collapse:collapse;font-size:1.04em;">';
+            timingsTable += '<tr><th style="color:#00f5d4;padding:0.3em 1.1em;">Level</th><th style="color:#00f5d4;padding:0.3em 1.1em;">Time (s)</th></tr>';
+            for (const t of LEVEL_TIMINGS) {
+                timingsTable += `<tr><td style=\"padding:0.3em 1.1em;\">${t.level}</td><td style=\"padding:0.3em 1.1em;text-align:right;\">${t.duration.toFixed(2)}</td></tr>`;
+            }
+            timingsTable += '</table>';
+            summaryBox.innerHTML = `
+                <h2 style="color:#00f5d4;margin-bottom:0.6em;">🎉 Congratulations${PLAYER_NAME ? ', ' + PLAYER_NAME : ''}! 🎉</h2>
+                <div style="font-size:1.2em;">You completed all <b>${totalLevels}</b> levels!</div>
+                <div style="margin:1.2em 0 0.5em 0;font-size:1.1em;">Time left: <b>${timeLeft}</b> seconds</div>
+                <div style="margin:1.2em 0 1.5em 0;color:#ffdf6e;font-size:1.1em;">You're a certified fun developer! 🚀</div>
+                <div style="margin:1.4em 0 0.2em 0;font-size:1.08em;">Level Completion Times:</div>
+                ${timingsTable}
+                <button id="fun-summary-close" style="margin-top:1.2em;padding:0.7em 2em;font-size:1.1em;background:#00f5d4;color:#232946;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Close</button>
+            `;
+            // Add Submit Results button
+            const submitBtn = document.createElement('button');
+            submitBtn.textContent = 'Submit Results';
+            submitBtn.style = 'margin-left:1em;margin-top:1.2em;padding:0.7em 2em;font-size:1.1em;background:#ffdf6e;color:#232946;border:none;border-radius:8px;font-weight:bold;cursor:pointer;';
+            submitBtn.onclick = function() {
+                submitResultsToGoogleForm(PLAYER_NAME, LEVEL_TIMINGS, totalLevels, typeof funScore !== 'undefined' ? funScore : '');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitted!';
+            };
+            summaryBox.appendChild(submitBtn);
+            overlay.appendChild(summaryBox);
+            document.body.appendChild(overlay);
+            document.getElementById('fun-summary-close').onclick = function() {
+                overlay.remove();
+            };
+
+// Google Form submission function
+function submitResultsToGoogleForm(name, timings, level, score) {
+    const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfAVnLjTyxALvsM0piPNVklcnk5TShkudZ5NBuyKVaeJ53Mcg/formResponse';
+    const data = new FormData();
+    data.append('entry.1827009640', name || ''); // Name
+    data.append('entry.189161261', JSON.stringify(timings)); // Timing Data
+    data.append('entry.732713251', level || ''); // Level
+    data.append('entry.304781310', score || ''); // Score
+    fetch(formUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: data
+    }).then(() => {
+        alert('Results submitted! Thank you for playing.');
+    }).catch(() => {
+        alert('Submission failed. Please try again or download your results.');
+    });
+}
+
         }
         window.showLevel = showLevel;
         // LEVEL 1: Confetti clicks
@@ -765,12 +1055,14 @@ if (quizContainer) {
         btn.onclick = function() {
             if (i === q.answer) {
                 status.textContent = '🎉 Correct!';
+                playSound('success');
                 setTimeout(() => {
                     showLevel(13);
                     addFunCountdown(60);
                 }, 900);
             } else {
                 status.textContent = '❌ Try again!';
+                playSound('error');
             }
         };
         optionsDiv.appendChild(btn);
@@ -814,12 +1106,14 @@ if (quizContainer) {
     btn.onclick = function() {
         if (input.value.trim().toLowerCase() === SECRET) {
             status.textContent = '🎉 Unlocked!';
+            playSound('success');
             setTimeout(() => {
                 showLevel(14);
                 addFunCountdown(60);
             }, 900);
         } else {
             status.textContent = '❌ Incorrect!';
+            playSound('error');
         }
     };
     input.addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
@@ -903,6 +1197,7 @@ function initCelebration() {
         "Secret: Try typing 'hari' anywhere on the homepage 😉"
     ];
     surpriseBtn.onclick = function() {
+        playSound('celebration');
         const reveal = document.createElement('div');
         reveal.textContent = surprises[Math.floor(Math.random()*surprises.length)];
         reveal.style.margin = '2em auto 0 auto';
@@ -916,7 +1211,23 @@ function initCelebration() {
         root.appendChild(reveal);
         surpriseBtn.disabled = true;
         surpriseBtn.style.opacity = 0.5;
-    };
+
+        // Add 'Finish & See Result' button
+        const finishBtn = document.createElement('button');
+        finishBtn.textContent = '🏁 Finish & See Result';
+        finishBtn.className = 'fun-btn';
+        finishBtn.style.display = 'block';
+        finishBtn.style.margin = '2.5em auto 0 auto';
+        finishBtn.style.fontSize = '1.18em';
+        finishBtn.style.background = '#00f5d4';
+        finishBtn.style.color = '#232946';
+        finishBtn.onclick = function() {
+            showSummaryOverlay();
+            finishBtn.disabled = true;
+            finishBtn.textContent = 'Results Shown!';
+        }
+        root.appendChild(finishBtn);
+    }
 }
 
 // NEW LEVELS: Each has a .complete-level-btn
@@ -995,14 +1306,17 @@ function initMemoryGame() {
                             const c2 = grid.querySelector('[data-idx="'+i2+'"]');
                             if (cardsArr[i1] === cardsArr[i2]) {
                                 matched.push(i1, i2);
+                                playSound('success');
                                 if (matched.length === cardsArr.length) {
                                     setTimeout(() => {
                                         const nextBtn = document.querySelector('#fun-level5 .complete-level-btn');
+                                        playSound('success');
                                         if (nextBtn) nextBtn.click();
                                         else showLevel(5);
                                     }, 900);
                                 }
                             } else {
+                                playSound('error');
                                 setTimeout(() => {
                                     c1.querySelector('.card-back').style.display = 'block';
                                     c1.querySelector('.card-front').style.display = 'none';
@@ -1108,11 +1422,13 @@ function initMemoryGame() {
                 if (!picked) return;
                 if (input.value.trim().toLowerCase() === picked.a.toLowerCase()) {
                     status.textContent = 'Correct! 🎉';
+                    playSound('success');
                     status.style.color = '#00f5d4';
                     addFunCountdown(60);
                     setTimeout(()=>{ showLevel(10); }, 1200);
                 } else {
                     status.textContent = 'Try again!';
+                    playSound('error');
                     status.style.color = '#ff6f61';
                 }
             };
@@ -1219,6 +1535,7 @@ function initMemoryGame() {
             function showFail() {
                 const msg = document.createElement('div');
                 msg.textContent = 'Oops! Try again.';
+                playSound('error');
                 msg.style.position = 'absolute';
                 msg.style.left = '50%';
                 msg.style.top = '35%';
@@ -1237,6 +1554,7 @@ function initMemoryGame() {
                 addFunCountdown(60);
                 const msg = document.createElement('div');
                 msg.textContent = 'You Win! 🎉';
+                playSound('success');
                 msg.style.position = 'absolute';
                 msg.style.left = '50%';
                 msg.style.top = '35%';
