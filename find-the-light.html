@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find the Light</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: radial-gradient(ellipse at bottom right, #232946 0%, #0a0a13 100%);
+      width: 100vw;
+      height: 100vh;
+      font-family: 'Poppins', Arial, sans-serif;
+      color: #fff;
+    }
+    #the-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      pointer-events: auto;
+      z-index: 1;
+    }
+    .fade-message {
+      position: absolute;
+      left: 50%;
+      top: 30%;
+      transform: translate(-50%, -50%);
+      color: #e2e8f0;
+      font-size: 1.3rem;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 1.2s;
+      z-index: 2;
+      white-space: pre-line;
+      pointer-events: none;
+      max-width: 90vw;
+      line-height: 1.7;
+      text-shadow: 0 2px 24px #000, 0 0 8px #00f5d4;
+    }
+    .fade-message.visible {
+      opacity: 1;
+    }
+    @media (max-width: 600px) {
+      .fade-message { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="the-canvas"></canvas>
+  <div id="intro" class="fade-message">The world is dark, but not empty.\nYou’re not lost — just quiet.\nMove slowly. Let your curiosity guide you.\n\nFind the hidden light.\n\n<small style='color:#aee;opacity:0.8;font-size:0.95em;'>Move your mouse or touch to explore. The glow will reveal what’s hidden. Somewhere, a gentle light awaits.</small></div>
+  <div id="found" class="fade-message">You found it. The light was always within you.</div>
+  <script>
+    // --- Fade-in intro ---
+    const intro = document.getElementById('intro');
+    const found = document.getElementById('found');
+    setTimeout(() => { intro.classList.add('visible'); }, 300);
+    let introDismissed = false;
+    function hideIntro() {
+      if (!introDismissed) {
+        intro.classList.remove('visible');
+        introDismissed = true;
+      }
+    }
+
+    // --- Canvas setup ---
+    const canvas = document.getElementById('the-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // --- Light zone ---
+    // Place the secret light at a random spot each visit
+    const zoneRadius = Math.max(60, Math.min(width, height) * 0.09);
+    // Avoid edges (20% padding)
+    function randomZoneCoord(max, pad) {
+      return Math.floor(pad + Math.random() * (max - 2*pad));
+    }
+    const zoneX = randomZoneCoord(width, width*0.2);
+    const zoneY = randomZoneCoord(height, height*0.2);
+    let foundLight = false;
+
+    // --- Mouse/touch tracking ---
+    let pointer = { x: width/2, y: height/2, active: false };
+    function updatePointer(e) {
+      hideIntro();
+      if (e.touches) {
+        pointer.x = e.touches[0].clientX;
+        pointer.y = e.touches[0].clientY;
+      } else {
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+      }
+      pointer.active = true;
+    }
+    canvas.addEventListener('mousemove', updatePointer);
+    canvas.addEventListener('touchstart', updatePointer);
+    canvas.addEventListener('touchmove', updatePointer);
+
+    // --- Animation loop ---
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      // Draw dark overlay
+      ctx.save();
+      ctx.fillStyle = '#0a0a13';
+      ctx.fillRect(0, 0, width, height);
+      // Draw soft glow following pointer
+      if (pointer.active) {
+        const grad = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, width * 0.13);
+        grad.addColorStop(0, 'rgba(0,245,212,0.23)');
+        grad.addColorStop(0.18, 'rgba(0,245,212,0.09)');
+        grad.addColorStop(0.4, 'rgba(34, 255, 255, 0.04)');
+        grad.addColorStop(1, 'rgba(10,10,20,0.97)');
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(pointer.x, pointer.y, width * 0.13, 0, 2 * Math.PI);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      // Draw hidden light zone (only visible if found)
+      if (foundLight) {
+        const grad = ctx.createRadialGradient(zoneX, zoneY, 0, zoneX, zoneY, zoneRadius);
+        grad.addColorStop(0, 'rgba(255,255,255,0.18)');
+        grad.addColorStop(0.25, 'rgba(0,245,212,0.18)');
+        grad.addColorStop(0.85, 'rgba(0,245,212,0.03)');
+        grad.addColorStop(1, 'rgba(10,10,20,0.0)');
+        ctx.beginPath();
+        ctx.arc(zoneX, zoneY, zoneRadius, 0, 2 * Math.PI);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // --- Win detection ---
+    function checkWin() {
+      if (foundLight) return;
+      const dx = pointer.x - zoneX;
+      const dy = pointer.y - zoneY;
+      if (Math.sqrt(dx*dx + dy*dy) < zoneRadius * 0.95) {
+        foundLight = true;
+        found.classList.add('visible');
+        setTimeout(() => {
+          found.classList.remove('visible');
+          window.location.href = 'index.html';
+        }, 5000);
+      }
+    }
+
+    function animate() {
+      draw();
+      if (pointer.active) checkWin();
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

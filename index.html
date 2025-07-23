@@ -15,12 +15,10 @@
     <link rel="stylesheet" href="unlock.css">
     <style>
         .hint-modal { display: none; /* ... styles from style.css ... */ }
-        .hint-modal-content { /* ... styles ... */ }
-        .hint-icon { /* ... styles ... */ }
+
     </style>
 </head>
 <body>
-
     <nav id="navbar" role="navigation" aria-label="Main Navigation">
         <a href="#hero" class="logo">SB</a>
         <i class="fa-solid fa-question-circle hint-icon" id="hint-icon" tabindex="0" aria-label="Show hint"></i>
@@ -36,6 +34,15 @@
             <i class="fa-solid fa-moon"></i>
         </button>
     </nav>
+
+    <!-- Hint Modal -->
+    <div class="modal" id="hint-modal" role="dialog" aria-modal="true" aria-labelledby="hint-modal-title" tabindex="-1">
+        <div class="modal-content">
+            <span class="close-button" id="hint-close" tabindex="0" aria-label="Close hint">&times;</span>
+            <h3 id="hint-modal-title">Hint</h3>
+            <p>Try clicking <strong>SB</strong> 5 times</p>
+        </div>
+    </div>
 
     <section id="hero">
         <div id="particles-js"></div>

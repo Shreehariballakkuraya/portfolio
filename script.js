@@ -2,29 +2,45 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Hint Modal Logic ---
     const hintIcon = document.getElementById('hint-icon');
     const hintModal = document.getElementById('hint-modal');
-    const hintModalClose = document.getElementById('hint-modal-close');
+    const hintModalClose = document.getElementById('hint-close');
 
     if (hintIcon && hintModal && hintModalClose) {
+        let hintTimeout = null;
         const openHintModal = () => {
+            hintModal.classList.add('active');
             hintModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            hintModalClose.style.display = 'none'; // Hide close button
+            hintModal.focus();
+            // Prevent manual close
+            const blockClose = e => e.stopPropagation();
+            hintModalClose.addEventListener('click', blockClose);
+            hintModalClose.addEventListener('keydown', blockClose);
+            hintModal.addEventListener('click', blockClose);
+            document.addEventListener('keydown', blockClose, true);
+            // Auto close after 3.4s
+            hintTimeout = setTimeout(() => {
+                closeHintModal();
+                // Cleanup
+                hintModalClose.removeEventListener('click', blockClose);
+                hintModalClose.removeEventListener('keydown', blockClose);
+                hintModal.removeEventListener('click', blockClose);
+                document.removeEventListener('keydown', blockClose, true);
+            }, 3400);
         };
-
         const closeHintModal = () => {
+            hintModal.classList.remove('active');
             hintModal.style.display = 'none';
+            document.body.style.overflow = '';
+            hintModalClose.style.display = '';
+            hintIcon.focus();
+            if (hintTimeout) clearTimeout(hintTimeout);
         };
-
         hintIcon.addEventListener('click', openHintModal);
-        hintModalClose.addEventListener('click', closeHintModal);
-
-        hintModal.addEventListener('click', (e) => {
-            if (e.target === hintModal) {
-                closeHintModal();
-            }
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && hintModal.style.display === 'flex') {
-                closeHintModal();
+        hintIcon.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openHintModal();
             }
         });
     }
@@ -34,6 +50,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const unlockProgress = document.getElementById('unlock-progress');
     const unlockToast = document.getElementById('unlock-toast');
     const logo = document.querySelector('.logo');
+
+    // --- Global HARI sequence redirect to Find the Light ---
+    const HARI_SECRET = 'hari';
+    let hariBuffer = '';
+    document.addEventListener('keydown', function(e) {
+        // Ignore if typing in input or textarea
+        const tag = document.activeElement && document.activeElement.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement.isContentEditable) return;
+        if (e.key.length === 1) {
+            hariBuffer += e.key.toLowerCase();
+            if (hariBuffer.length > HARI_SECRET.length) hariBuffer = hariBuffer.slice(-HARI_SECRET.length);
+            if (hariBuffer === HARI_SECRET) {
+                window.location.href = 'find-the-light.html';
+            }
+        }
+    });
 
     const konamiCode = [
         'ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'
