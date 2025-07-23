@@ -117,6 +117,19 @@ nav.scrolled {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
+.hint-icon {
+    font-size: 1.5rem;
+    color: var(--subtle-text-color);
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+    margin-left: 1rem;
+}
+
+.hint-icon:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
 nav .logo {
     font-family: 'Roboto Mono', monospace;
     font-weight: 700;

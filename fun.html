@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games | Shreehari Ballakkuraya</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav id="navbar" role="navigation" aria-label="Main Navigation">
+        <a href="index.html" class="logo">SB</a>
+        <ul>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#skills">Skills</a></li>
+            <li><a href="index.html#projects">Projects</a></li>
+            <li><a href="index.html#education">Education</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+            <li><a href="fun.html">Games</a></li>
+        </ul>
+        <button id="theme-toggle" aria-label="Toggle Dark/Light Mode" tabindex="0">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </nav>
+    <section id="fun-interactive" class="container">
+        <h2 class="section-title" style="text-align:center;margin-bottom:1.2em;">Fun & Interactive</h2>
+        <div id="fun-timer" style="font-size:1.3em;font-family:monospace;color:#00f5d4;margin-bottom:1em;">Timer: 00:00</div>
+        <div id="fun-progress-container" style="width:100%;max-width:480px;margin:0 auto 1.2em auto;display:flex;align-items:center;gap:1em;">
+            <span id="fun-level-label" style="font-weight:bold;color:#232946;font-size:1.1em;">Level 1 of 14</span>
+            <div style="flex:1;height:18px;background:#232946;border-radius:7px;overflow:hidden;">
+                <div id="fun-progress-bar" style="height:100%;width:7%;background:linear-gradient(90deg,#00f5d4,#00d4f5);transition:width 0.4s;"></div>
+            </div>
+        </div>
+        <!-- Level 1: Confetti Button -->
+        <div id="fun-level1" style="display:block;">
+            <div class="interactive-widgets">
+                <h3>Interactive Widgets</h3>
+                <button id="confetti-btn" class="fun-btn">Click me for Confetti!</button>
+            </div>
+        </div>
+        <!-- Level 2: Drag Cards -->
+        <div id="fun-level2" style="display:none;">
+            <div class="interactive-widgets">
+                <div id="draggable-area">
+                    <div class="draggable-card" draggable="true">Drag me!</div>
+                    <div class="draggable-card" draggable="true">Or drag me!</div>
+                </div>
+                <div id="animated-bg"></div>
+            </div>
+        </div>
+        <!-- Level 3: Quiz -->
+        <div id="fun-level3" style="display:none;">
+            <div class="logic-puzzle">
+                <h3>Mini Quiz Puzzle</h3>
+                <div id="quiz-container"></div>
+            </div>
+        </div>
+        <!-- Level 4: Memory Game -->
+        <div id="fun-level4" style="display:none;">
+            <div id="memory-game-root"></div>
+        </div>
+        <!-- Level 5: Simon Says -->
+        <div id="fun-level5" style="display:none;">
+            <div id="simon-says-root"></div>
+        </div>
+        <!-- Level 6: Typing Challenge -->
+        <div id="fun-level6" style="display:none;">
+            <div id="typing-challenge-root"></div>
+        </div>
+        <!-- Level 7: Logic Puzzle -->
+        <div id="fun-level7" style="display:none;">
+            <div id="logic-puzzle-root"></div>
+        </div>
+        <!-- Level 8: Pixel Art -->
+        <div id="fun-level8" style="display:none;">
+            <div id="pixel-art-root"></div>
+        </div>
+        <!-- Level 9: Trivia Wheel -->
+        <div id="fun-level9" style="display:none;">
+            <div id="trivia-wheel-root"></div>
+        </div>
+        <!-- Level 10: Platformer Game -->
+        <div id="fun-level10" style="display:none;">
+            <div id="platformer-root"></div>
+        </div>
+        <!-- Level 11: Code Debugging -->
+        <div id="fun-level11" style="display:none;"></div>
+        <!-- Level 12: Emoji Guessing -->
+        <div id="fun-level12" style="display:none;">
+            <div class="game-placeholder"><h3>Emoji Guessing</h3><button class="complete-level-btn" data-next="13">Complete</button></div>
+        </div>
+        <!-- Level 13: Secret Command -->
+        <div id="fun-level13" style="display:none;">
+            <div id="secret-command-root"></div>
+        </div>
+        <!-- Level 14: Celebration & Surprise -->
+        <div id="fun-level14" style="display:none;">
+            <div id="celebration-root"></div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+    <!-- Add form-status for script.js compatibility if you ever add a contact form here -->
+    <!-- <form id="contact-form">...<div id="form-status"></div></form> -->
+</body>
+<script src="script.js"></script>
+<script src="fun.js"></script>
+
+</html>

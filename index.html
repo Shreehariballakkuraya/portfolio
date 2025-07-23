@@ -13,17 +13,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="unlock.css">
+    <style>
+        .hint-modal { display: none; /* ... styles from style.css ... */ }
+        .hint-modal-content { /* ... styles ... */ }
+        .hint-icon { /* ... styles ... */ }
+    </style>
 </head>
 <body>
 
     <nav id="navbar" role="navigation" aria-label="Main Navigation">
         <a href="#hero" class="logo">SB</a>
+        <i class="fa-solid fa-question-circle hint-icon" id="hint-icon" tabindex="0" aria-label="Show hint"></i>
         <ul>
             <li><a href="#about">About</a></li>
             <li><a href="#skills">Skills</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#education">Education</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="fun.html">Games</a></li>
         </ul>
         <button id="theme-toggle" aria-label="Toggle Dark/Light Mode" tabindex="0">
             <i class="fa-solid fa-moon"></i>
@@ -131,105 +138,22 @@
                 </div>
             </div>
         </div>
-    </section>a
-
-    <div id="unlock-progress" class="unlock-progress" style="display:none;"></div>
-    <section id="fun-interactive" class="container" data-aos="fade-up" style="display:none;">
-        <h2 class="section-title" style="text-align:center;margin-bottom:1.2em;">Fun & Interactive</h2>
-        <!-- DEV ONLY: Skip to Level (remove before deploy) -->
-        <div id="dev-skip-level" style="text-align:center;margin-bottom:1.5em;">
-            <label style="color:#00f5d4;font-weight:bold;">[DEV] Skip to level: </label>
-            <select id="skip-to-level">
-                <option value="">-- Select --</option>
-                <option value="1">Level 1</option>
-                <option value="2">Level 2</option>
-                <option value="3">Level 3</option>
-                <option value="4">Level 4</option>
-                <option value="5">Level 5</option>
-                <option value="6">Level 6</option>
-                <option value="7">Level 7</option>
-                <option value="8">Level 8</option>
-                <option value="9">Level 9</option>
-                <option value="10">Level 10</option>
-                <option value="11">Level 11</option>
-                <option value="12">Level 12</option>
-                <option value="13">Level 13</option>
-                <option value="14">Level 14</option>
-            </select>
-            <span style="color:#ff6f61;font-size:0.9em;">[Remove before deploy]</span>
-        </div>
-        <div id="fun-timer" style="font-size:1.3em;font-family:monospace;color:#00f5d4;margin-bottom:1em;">Timer: 00:00</div>
-        <!-- Level 1: Confetti Button -->
-        <div id="fun-level1" style="display:block;">
-            <div class="interactive-widgets">
-                <h3>Interactive Widgets</h3>
-                <button id="confetti-btn" class="fun-btn">Click me for Confetti!</button>
-            </div>
-        </div>
-        <!-- Level 2: Drag Cards -->
-        <div id="fun-level2" style="display:none;">
-            <div class="interactive-widgets">
-                <div id="draggable-area">
-                    <div class="draggable-card" draggable="true">Drag me!</div>
-                    <div class="draggable-card" draggable="true">Or drag me!</div>
-                </div>
-                <div id="animated-bg"></div>
-            </div>
-        </div>
-        <!-- Level 3: Quiz -->
-        <div id="fun-level3" style="display:none;">
-            <div class="logic-puzzle">
-                <h3>Mini Quiz Puzzle</h3>
-                <div id="quiz-container"></div>
-            </div>
-        </div>
-        <!-- Level 4: Memory Game -->
-        <div id="fun-level4" style="display:none;">
-            <div id="memory-game-root"></div>
-        </div>
-        <!-- Level 5: Simon Says -->
-        <div id="fun-level5" style="display:none;">
-            <div id="simon-says-root"></div>
-        </div>
-        <!-- Level 6: Typing Challenge -->
-        <div id="fun-level6" style="display:none;">
-            <div id="typing-challenge-root"></div>
-        </div>
-        <!-- Level 7: Logic Puzzle -->
-        <div id="fun-level7" style="display:none;">
-            <div id="logic-puzzle-root"></div>
-        </div>
-        <!-- Level 8: Pixel Art -->
-        <div id="fun-level8" style="display:none;">
-            <div id="pixel-art-root"></div>
-        </div>
-        <!-- Level 9: Trivia Wheel -->
-        <div id="fun-level9" style="display:none;">
-            <div id="trivia-wheel-root"></div>
-        </div>
-        <!-- Level 10: Platformer Game -->
-        <div id="fun-level10" style="display:none;">
-            <div id="platformer-root"></div>
-        </div>
-        <!-- Level 11: Code Debugging -->
-        <div id="fun-level11" style="display:none;">
-            <div class="game-placeholder"><h3>Code Debugging</h3><button class="complete-level-btn" data-next="12">Complete</button></div>
-        </div>
-        <!-- Level 12: Emoji Guessing -->
-        <div id="fun-level12" style="display:none;">
-            <div class="game-placeholder"><h3>Emoji Guessing</h3><button class="complete-level-btn" data-next="13">Complete</button></div>
-        </div>
-        <!-- Level 13: Secret Command -->
-        <div id="fun-level13" style="display:none;">
-            <div class="game-placeholder"><h3>Secret Command</h3><button class="complete-level-btn" data-next="14">Complete</button></div>
-        </div>
-
     </section>
 
-    <div id="unlock-toast" class="unlock-toast"></div>
     <footer>
         <p>© 2025 Shreehari Ballakkuraya. Crafted with passion, Python, and Kotlin.</p>
     </footer>
+
+    <div id="hint-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="hint-modal-close">×</span>
+            <h3>A Secret Awaits</h3>
+            <p>To unlock a hidden feature, you must perform the ancient gamer's ritual. Follow the arrows, but don't stray from the path of two up, two down, and alternating lefts and rights. Finish with the two letters that represent the core of classic gaming.</p>
+        </div>
+    </div>
+
+    <div id="unlock-progress" class="unlock-progress" style="display:none;"></div>
+    <div id="unlock-toast" class="unlock-toast"></div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
