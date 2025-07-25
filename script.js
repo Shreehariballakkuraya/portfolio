@@ -68,16 +68,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     const konamiCode = [
-        'ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'
+        'ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight'
     ];
     let konamiIndex = 0;
     let logoClicks = 0;
     let unlockActive = false;
 
     const unlockSounds = {
-        correct: new Audio('https://cdn.jsdelivr.net/gh/terkelg/konami-sounds/correct.mp3'),
-        wrong: new Audio('https://cdn.jsdelivr.net/gh/terkelg/konami-sounds/wrong.mp3'),
-        unlock: new Audio('https://cdn.jsdelivr.net/gh/terkelg/konami-sounds/unlock.mp3')
+        correct: new Audio('/sounds/correct.mp3'),
+        wrong: new Audio('/sounds/wrong.mp3'),
+        unlock: new Audio('/sounds/unlock.mp3')
     };
 
     function renderProgress(idx, error) {
