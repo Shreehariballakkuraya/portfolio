@@ -75,9 +75,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let unlockActive = false;
 
     const unlockSounds = {
-        correct: new Audio('/sounds/correct.mp3'),
-        wrong: new Audio('/sounds/wrong.mp3'),
-        unlock: new Audio('/sounds/unlock.mp3')
+        correct: new Audio('sounds/correct.mp3'),
+        wrong: new Audio('sounds/wrong.mp3'),
+        unlock: new Audio('sounds/unlock.mp3')
     };
 
     function renderProgress(idx, error) {

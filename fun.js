@@ -27,8 +27,18 @@ function playSound(type) {
     if (snd) {
         try {
             snd.currentTime = 0;
-            snd.play();
-        } catch(e) {/* ignore */}
+            // Try to play, but catch NotSupportedError or other issues
+            const playPromise = snd.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(e => {
+                    DEBUG && DEBUG.warn && DEBUG.warn('Sound play failed:', e);
+                });
+            }
+        } catch(e) {
+            DEBUG && DEBUG.warn && DEBUG.warn('Sound play error:', e);
+        }
+    } else {
+        DEBUG && DEBUG.warn && DEBUG.warn(`Sound for type "${type}" not loaded or missing.`);
     }
 }
 function toggleMute() {
@@ -510,10 +520,220 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         ensureTimer();
         // Level containers
-        const totalLevels = 14;
+        const totalLevels = 15;
+
+const gameInitializers = {
+    4: { name: 'Memory Game', init: initMemoryGame },
+    5: { name: 'Simon Says', init: initSimonSays },
+    6: { name: 'Typing Challenge', init: initTypingChallenge },
+    7: { name: 'Logic Puzzle', init: initLogicPuzzle },
+    8: { name: 'Pixel Art', init: initPixelArt },
+    9: { name: 'Trivia Wheel', init: initTriviaWheel },
+    10: { name: 'Platformer', init: initPlatformer },
+    11: { name: 'Code Debugging', init: initCodeDebugging },
+    12: { name: 'Emoji Guessing', init: null }, // If implemented
+    13: { name: 'Secret Command', init: null }, // If implemented
+    14: { name: 'Space Dodger', init: initSpaceDodger }
+};
+
+// LEVEL 15: Space Dodger / Jetpack Game
+function initSpaceDodger() {
+    const root = document.getElementById('space-dodger-root');
+    if (!root) return;
+    root.innerHTML = '';
+
+    // Instructions
+    const instr = document.createElement('div');
+    instr.textContent = 'Level 14: Use ←/→ to dodge meteors. You have 1 shield. Survive 15 seconds!';
+    Object.assign(instr.style, {
+        marginBottom: '1em',
+        background: '#0f172a',
+        color: '#00f5d4',
+        padding: '0.7em 1em',
+        borderRadius: '7px',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    });
+    root.appendChild(instr);
+
+    const container = document.createElement('div');
+    Object.assign(container.style, {
+        position: 'relative',
+        width: '600px',
+        height: '300px',
+        margin: '2em auto',
+        background: 'radial-gradient(ellipse at center, #000 0%, #111827 100%)',
+        border: '2px solid #00f5d4',
+        borderRadius: '12px',
+        overflow: 'hidden'
+    });
+    root.appendChild(container);
+
+    // Background stars
+    for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        Object.assign(star.style, {
+            position: 'absolute',
+            left: Math.random() * 600 + 'px',
+            top: Math.random() * 300 + 'px',
+            width: '2px',
+            height: '2px',
+            background: '#e0f2fe',
+            opacity: Math.random()
+        });
+        container.appendChild(star);
+    }
+
+    // Player
+    const player = document.createElement('div');
+    Object.assign(player.style, {
+        position: 'absolute',
+        left: '280px',
+        top: '250px',
+        width: '40px',
+        height: '40px',
+        background: '#00f5d4',
+        borderRadius: '50%',
+        boxShadow: '0 0 10px #00f5d4',
+        zIndex: '3',
+        transition: 'left 0.05s'
+    });
+    container.appendChild(player);
+
+    // Variables
+    let x = 280;
+    const speed = 6;
+    let meteors = [];
+    let meteorInterval;
+    let hasShield = true;
+    let running = true;
+
+    function move(dir) {
+        if (!running) return;
+        x += dir * 20;
+        x = Math.max(0, Math.min(560, x)); // Boundaries (600 width - 40 player width)
+        player.style.left = x + 'px';
+    }
+
+    // Keyboard controls
+    function keyHandler(e) {
+        if (e.code === 'ArrowLeft') move(-1);
+        else if (e.code === 'ArrowRight') move(1);
+    }
+    document.addEventListener('keydown', keyHandler);
+
+    // Spawn meteors
+    function spawnMeteor() {
+        const meteor = document.createElement('div');
+        const x = Math.random() * 540 + 30;
+        Object.assign(meteor.style, {
+            position: 'absolute',
+            top: '-40px',
+            left: x + 'px',
+            width: '30px',
+            height: '30px',
+            background: '#f87171',
+            borderRadius: '50%',
+            boxShadow: '0 0 10px #f87171',
+            zIndex: '2'
+        });
+        container.appendChild(meteor);
+        meteors.push({ el: meteor, y: -40, x });
+    }
+
+    meteorInterval = setInterval(() => {
+        if (running) spawnMeteor();
+    }, 600);
+
+    function fail() {
+        running = false;
+        clearInterval(meteorInterval);
+        player.style.background = '#ff5e5e';
+        playSound?.('error');
+        showMessage('Hit! Game Over', '#ff6f61');
+        document.removeEventListener('keydown', keyHandler);
+        setTimeout(initSpaceDodger, 1400);
+    }
+
+    function win() {
+        running = false;
+        clearInterval(meteorInterval);
+        showMessage('You Win! 🚀', '#00f5d4');
+        playSound?.('success');
+        document.removeEventListener('keydown', keyHandler);
+        addFunCountdown?.(60);
+        setTimeout(() => showLevel?.(15), 1400);
+    }
+
+    function showMessage(text, color) {
+        const msg = document.createElement('div');
+        msg.textContent = text;
+        Object.assign(msg.style, {
+            position: 'absolute',
+            left: '50%',
+            top: '40%',
+            transform: 'translate(-50%,-50%)',
+            background: '#fff',
+            color,
+            fontWeight: 'bold',
+            fontSize: '1.2em',
+            padding: '0.7em 2em',
+            borderRadius: '10px',
+            zIndex: '10'
+        });
+        container.appendChild(msg);
+    }
+
+    function updateMeteors() {
+        if (!running) return;
+
+        // Copy to avoid mutation during iteration
+        for (let i = meteors.length - 1; i >= 0; i--) {
+            const m = meteors[i];
+            m.y += speed;
+            m.el.style.top = m.y + 'px';
+
+            const pBox = player.getBoundingClientRect();
+            const mBox = m.el.getBoundingClientRect();
+
+            if (
+                pBox.left < mBox.right &&
+                pBox.right > mBox.left &&
+                pBox.top < mBox.bottom &&
+                pBox.bottom > mBox.top
+            ) {
+                if (hasShield) {
+                    hasShield = false;
+                    player.style.boxShadow = 'none';
+                    m.el.remove();
+                    meteors.splice(i, 1);
+                } else {
+                    fail();
+                    return;
+                }
+            }
+
+            // Remove offscreen
+            if (m.y > 320) {
+                m.el.remove();
+                meteors.splice(i, 1);
+            }
+        }
+
+        requestAnimationFrame(updateMeteors);
+    }
+
+    // Start
+    updateMeteors();
+    setTimeout(() => {
+        if (running) win();
+    }, 15000);
+}
+
 
         // LEVEL 11: Code Debugging
-        function initCodeDebugging() {
+    
+function initCodeDebugging() {
             const root = document.getElementById('fun-level11');
             if (!root) return;
             root.innerHTML = '';
@@ -676,9 +896,9 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => textarea.focus(), 200);
         }
         function showLevel(n) {
-            // Show summary overlay if game is finished
-            if (n > totalLevels) {
-                showSummaryOverlay();
+            // Trigger celebration overlay if all levels are completed
+            if (n > 14) {
+                initCelebration();
                 return;
             }
             // Track timing for previous level
@@ -731,30 +951,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 progressBar.style.width = pct + '%';
             }
 
-            // Initialize games with error handling
-            const gameInitializers = {
-                4: { name: 'Memory Game', init: initMemoryGame },
-                5: { name: 'Simon Says', init: initSimonSays },
-                6: { name: 'Typing Challenge', init: initTypingChallenge },
-                7: { name: 'Logic Puzzle', init: initLogicPuzzle },
-                8: { name: 'Pixel Art', init: initPixelArt },
-                9: { name: 'Trivia Wheel', init: initTriviaWheel },
-                10: { name: 'Platformer', init: initPlatformer },
-                11: { name: 'Code Debugging', init: initCodeDebugging },
-                14: { name: 'Celebration', init: initCelebration }
-            };
-
-            // Initialize game logic
-            if (gameInitializers[n]) {
-                const game = gameInitializers[n];
+            // Initialize game for the current level
+            const game = gameInitializers[n];
+            if (game && typeof game.init === 'function') {
                 DEBUG.log(`Initializing ${game.name} for level ${n}`);
                 try {
-                    DEBUG.performance.start(`init${game.name.replace(/\s+/g, '')}`);
+                    DEBUG.performance.start(`init-${n}`);
                     game.init();
-                    DEBUG.performance.end(`init${game.name.replace(/\s+/g, '')}`);
+                    DEBUG.performance.end(`init-${n}`);
                     DEBUG.log(`${game.name} initialized successfully`);
-                } catch (error) {
-                    DEBUG.error(`Failed to initialize ${game.name}:`, error);
+                } catch (err) {
+                    DEBUG.error(`Failed to initialize ${game.name}:`, err);
                 }
             }
         }
@@ -825,8 +1032,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('fun-summary-close').onclick = function() {
                 overlay.remove();
             };
+        }
 
-// Google Form submission function
 function submitResultsToGoogleForm(name, timings, level, score) {
     const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfAVnLjTyxALvsM0piPNVklcnk5TShkudZ5NBuyKVaeJ53Mcg/formResponse';
     const data = new FormData();
@@ -844,14 +1051,13 @@ function submitResultsToGoogleForm(name, timings, level, score) {
         alert('Submission failed. Please try again or download your results.');
     });
 }
-
-        }
-        window.showLevel = showLevel;
-        // LEVEL 1: Confetti clicks
-        let confettiClicks = 0;
-        const CONFETTI_THRESHOLD = 5;
+window.showLevel = showLevel;
+// LEVEL 1: Confetti clicks
+let confettiClicks = 0;
+const CONFETTI_THRESHOLD = 5;
         
-        function updateConfettiCounter() {
+function updateConfettiCounter() {
+    DEBUG.performance.start('updateConfettiCounter');
             DEBUG.performance.start('updateConfettiCounter');
             
             const btn = safeSelect('#confetti-btn');
@@ -1434,145 +1640,221 @@ function initMemoryGame() {
             };
         }
 
-        // LEVEL 10: Platformer Mini-Game
         function initPlatformer() {
             const root = document.getElementById('platformer-root');
             if (!root) return;
             root.innerHTML = '';
-            // Instructions
+        
+            // === UI: Instructions ===
             const instr = document.createElement('div');
-            instr.textContent = 'Press Space or ↑ to jump. Avoid obstacles and survive 12 seconds!';
-            instr.style.marginBottom = '1em';
-            instr.style.background = '#232946';
-            instr.style.color = '#00f5d4';
-            instr.style.padding = '0.7em 1em';
-            instr.style.borderRadius = '7px';
-            instr.style.fontWeight = 'bold';
+            instr.textContent = 'Press Space or ↑ to double-jump. Avoid obstacles and survive 12 seconds!';
+            Object.assign(instr.style, {
+                marginBottom: '1em',
+                background: '#232946',
+                color: '#00f5d4',
+                padding: '0.7em 1em',
+                borderRadius: '7px',
+                fontWeight: 'bold',
+                textAlign: 'center'
+            });
             root.appendChild(instr);
-            // Simple runner: press space/arrow-up to jump over obstacles
+        
+            // === Game Container ===
             const container = document.createElement('div');
-            container.style.position = 'relative';
-            container.style.width = '600px';
-            container.style.height = '180px';
-            container.style.margin = '2em auto';
-            container.style.background = '#222';
-            container.style.border = '2px solid #00f5d4';
-            container.style.borderRadius = '12px';
+            Object.assign(container.style, {
+                position: 'relative',
+                width: '600px',
+                height: '180px',
+                margin: '2em auto',
+                background: 'linear-gradient(to top, #232946, #1a1a2e)',
+                border: '2px solid #00f5d4',
+                borderRadius: '12px',
+                overflow: 'hidden'
+            });
             root.appendChild(container);
-            // Player
-            const player = document.createElement('div');
-            player.style.position = 'absolute';
-            player.style.left = '60px';
-            player.style.bottom = '28px';
-            player.style.width = '40px';
-            player.style.height = '40px';
-            player.style.background = '#00f5d4';
-            player.style.borderRadius = '50%';
-            player.style.boxShadow = '0 0 8px #00f5d4';
-            container.appendChild(player);
-            // Obstacle
-            const obs = document.createElement('div');
-            obs.style.position = 'absolute';
-            obs.style.left = '540px'; // start at far right
-            obs.style.bottom = '28px';
-            obs.style.width = '38px';
-            obs.style.height = '54px';
-            obs.style.background = '#ff6f61';
-            obs.style.borderRadius = '8px';
-            obs.style.boxShadow = '0 0 8px #ff6f61';
-            container.appendChild(obs);
-            // Ground
+        
+            // === Parallax Clouds ===
+            const clouds = [];
+            for (let i = 0; i < 3; i++) {
+                const cloud = document.createElement('div');
+                Object.assign(cloud.style, {
+                    position: 'absolute',
+                    top: `${20 + i * 25}px`,
+                    left: `${i * 200}px`,
+                    width: '80px',
+                    height: '30px',
+                    background: '#ffffff55',
+                    borderRadius: '20px',
+                    zIndex: '1'
+                });
+                container.appendChild(cloud);
+                clouds.push(cloud);
+            }
+        
+            // === Ground ===
             const ground = document.createElement('div');
-            ground.style.position = 'absolute';
-            ground.style.left = '0';
-            ground.style.bottom = '0';
-            ground.style.width = '100%';
-            ground.style.height = '28px';
-            ground.style.background = '#444';
-            ground.style.borderRadius = '0 0 14px 14px';
+            Object.assign(ground.style, {
+                position: 'absolute',
+                left: '0',
+                bottom: '0',
+                width: '100%',
+                height: '28px',
+                background: '#444',
+                borderRadius: '0 0 14px 14px',
+                zIndex: '2'
+            });
             container.appendChild(ground);
-            // Jump logic
-            let jumping = false;
+        
+            // === Player ===
+            const player = document.createElement('div');
+            Object.assign(player.style, {
+                position: 'absolute',
+                left: '60px',
+                bottom: '28px',
+                width: '40px',
+                height: '40px',
+                background: '#00f5d4',
+                borderRadius: '50%',
+                boxShadow: '0 0 8px #00f5d4',
+                transition: 'background 0.2s',
+                zIndex: '3'
+            });
+            container.appendChild(player);
+        
+            // === Obstacles ===
+            const obstacles = [];
+            const numObstacles = 3;
+            for (let i = 0; i < numObstacles; i++) {
+                const obs = document.createElement('div');
+                Object.assign(obs.style, {
+                    position: 'absolute',
+                    left: `${600 + i * 250}px`,
+                    bottom: '28px',
+                    width: '28px',
+                    height: '50px',
+                    background: '#ff6f61',
+                    borderRadius: '8px',
+                    boxShadow: '0 0 8px #ff6f61',
+                    zIndex: '3'
+                });
+                container.appendChild(obs);
+                obstacles.push({ el: obs, x: 600 + i * 250 });
+            }
+        
+            // === Physics Variables ===
             let y = 0;
             let vy = 0;
-            let gravity = -2.3;
-            let jumpPower = 32;
+            const gravity = -1.1;
+            const jumpPower = 18;
+            const groundY = 28;
+            let jumpsLeft = 2;
+            let speed = 4;
+            let running = true;
+        
             function jump() {
-                if (!jumping) {
+                if (jumpsLeft > 0) {
                     vy = jumpPower;
-                    jumping = true;
+                    jumpsLeft--;
                 }
             }
-            document.addEventListener('keydown', function(e) {
+        
+            document.addEventListener('keydown', (e) => {
                 if (e.code === 'Space' || e.code === 'ArrowUp') jump();
             });
             container.addEventListener('click', jump);
-            // Obstacle movement
-            let obsX = 540;
-            let speed = 5.2;
-            let running = true;
-            function frame() {
+        
+            // === Game Loop ===
+            let lastTime = performance.now();
+            function frame(now) {
                 if (!running) return;
-                // Player physics
-                vy += gravity;
-                y += vy;
-                if (y < 0) { y = 0; vy = 0; jumping = false; }
-                player.style.bottom = (18 + y) + 'px';
-                // Obstacle movement (leftwards)
-                obsX -= speed;
-                if (obsX < -28) { obsX = 340 + Math.random()*40; speed += 0.2; }
-                obs.style.left = obsX + 'px';
-                // Collision
-                // Player at left: left=40px, width=32; obstacle: obsX, width=28
-                if (obsX < 40+32 && obsX+28 > 40 && y < 18+36 && y+32 > 18) {
-                    running = false;
-                    player.style.background = '#ff5e5e';
-                    showFail();
-                    return;
+        
+                const dt = (now - lastTime) / 16.67;
+                lastTime = now;
+        
+                // Player movement
+                vy += gravity * dt;
+                y += vy * dt;
+                if (y < 0) {
+                    y = 0;
+                    vy = 0;
+                    jumpsLeft = 2;
                 }
+                player.style.bottom = `${groundY + y}px`;
+        
+                // Parallax clouds
+                clouds.forEach((cloud, i) => {
+                    const left = parseFloat(cloud.style.left) - (speed * 0.3 * dt);
+                    cloud.style.left = (left < -100 ? 600 : left) + 'px';
+                });
+        
+                // Obstacles
+                obstacles.forEach((obs) => {
+                    obs.x -= speed * dt;
+                    if (obs.x < -40) {
+                        obs.x = 600 + Math.random() * 300;
+                    }
+                    obs.el.style.left = obs.x + 'px';
+        
+                    // Collision check
+                    const pBox = player.getBoundingClientRect();
+                    const oBox = obs.el.getBoundingClientRect();
+                    if (
+                        pBox.left < oBox.right &&
+                        pBox.right > oBox.left &&
+                        pBox.bottom > oBox.top &&
+                        pBox.top < oBox.bottom
+                    ) {
+                        fail();
+                        return;
+                    }
+                });
+        
                 requestAnimationFrame(frame);
             }
-            function showFail() {
-                const msg = document.createElement('div');
-                msg.textContent = 'Oops! Try again.';
-                playSound('error');
-                msg.style.position = 'absolute';
-                msg.style.left = '50%';
-                msg.style.top = '35%';
-                msg.style.transform = 'translate(-50%,-50%)';
-                msg.style.color = '#ff6f61';
-                msg.style.fontWeight = 'bold';
-                msg.style.fontSize = '1.2em';
-                msg.style.background = '#fff';
-                msg.style.padding = '0.7em 2em';
-                msg.style.borderRadius = '8px';
-                container.appendChild(msg);
-                setTimeout(()=>{ initPlatformer(); }, 1200);
-            }
-            function showWin() {
+        
+            function fail() {
                 running = false;
-                addFunCountdown(60);
-                const msg = document.createElement('div');
-                msg.textContent = 'You Win! 🎉';
-                playSound('success');
-                msg.style.position = 'absolute';
-                msg.style.left = '50%';
-                msg.style.top = '35%';
-                msg.style.transform = 'translate(-50%,-50%)';
-                msg.style.color = '#00f5d4';
-                msg.style.fontWeight = 'bold';
-                msg.style.fontSize = '1.2em';
-                msg.style.background = '#fff';
-                msg.style.padding = '0.7em 2em';
-                msg.style.borderRadius = '8px';
-                container.appendChild(msg);
-                setTimeout(()=>{ showLevel(11); }, 1300);
+                player.style.background = '#ff5e5e';
+                showMessage('Oops! Try again.', '#ff6f61');
+                playSound?.('error');
+                setTimeout(initPlatformer, 1400);
             }
-            // Win condition: survive 12 seconds
-            setTimeout(()=>{ if (running) showWin(); }, 12000);
-            frame();
+        
+            function win() {
+                running = false;
+                showMessage('You Win! 🎉', '#00f5d4');
+                playSound?.('success');
+                addFunCountdown?.(60);
+                setTimeout(() => showLevel?.(11), 1400);
+            }
+        
+            function showMessage(text, color) {
+                const msg = document.createElement('div');
+                msg.textContent = text;
+                Object.assign(msg.style, {
+                    position: 'absolute',
+                    left: '50%',
+                    top: '35%',
+                    transform: 'translate(-50%,-50%)',
+                    color,
+                    background: '#fff',
+                    fontWeight: 'bold',
+                    fontSize: '1.2em',
+                    padding: '0.7em 2em',
+                    borderRadius: '8px',
+                    zIndex: '10'
+                });
+                container.appendChild(msg);
+            }
+        
+            // Start game
+            setTimeout(() => {
+                if (running) win();
+            }, 12000);
+        
+            requestAnimationFrame(frame);
         }
-
+        
         // LEVEL 8: Pixel Art Coloring
         function initPixelArt() {
             const root = document.getElementById('pixel-art-root');
@@ -1982,7 +2264,6 @@ function initMemoryGame() {
             }
             nextRound();
         }
-
         // Fisher-Yates shuffle
         function shuffle(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
@@ -1990,13 +2271,12 @@ function initMemoryGame() {
                 [arr[i], arr[j]] = [arr[j], arr[i]];
             }
         }
-    })(); // Close funLevels function
+    }()); // Close funLevels IIFE
 
     // Complete initialization performance timing
     DEBUG.performance.end('funPageInit');
     DEBUG.log('Fun page initialization completed');
-
-})(); // Close main DOMContentLoaded function
+}); // Close main DOMContentLoaded listener
 
 // === DEBUG CONSOLE UI ===
 if (DEBUG.enabled) {
@@ -2022,18 +2302,15 @@ if (DEBUG.enabled) {
     
     const debugHeader = document.createElement('div');
     debugHeader.style.cssText = `
-        background: #00f5d4;
-        color: black;
+        background: #1a1a1a;
         padding: 8px 12px;
         font-weight: bold;
+        border-bottom: 1px solid #333;
         display: flex;
         justify-content: space-between;
         align-items: center;
     `;
-    debugHeader.innerHTML = `
-        <span>🐛 Debug Console</span>
-        <button id="debug-clear" style="background: transparent; border: none; color: black; cursor: pointer; font-size: 14px;">Clear</button>
-    `;
+    debugHeader.innerHTML = '<span>DEBUG CONSOLE</span><button id="debug-clear" style="background:none;border:none;color:#ff4757;font-size:14px;cursor:pointer;">Clear</button>';
     
     const debugContent = document.createElement('div');
     debugContent.id = 'debug-content';
@@ -2041,7 +2318,8 @@ if (DEBUG.enabled) {
         padding: 12px;
         max-height: 240px;
         overflow-y: auto;
-        line-height: 1.4;
+        box-shadow: 0 4px 12px rgba(0, 245, 212, 0.3);
+        transition: all 0.3s ease;
     `;
     
     debugConsole.appendChild(debugHeader);
@@ -2076,9 +2354,12 @@ if (DEBUG.enabled) {
     document.body.appendChild(debugToggle);
     
     // Clear button functionality
-    document.getElementById('debug-clear').addEventListener('click', () => {
-        debugContent.innerHTML = '';
-    });
+    const clearBtn = debugConsole.querySelector('#debug-clear');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            debugContent.innerHTML = '';
+        });
+    }
     
     // Override DEBUG.log to also show in console
     const originalLog = DEBUG.log;
