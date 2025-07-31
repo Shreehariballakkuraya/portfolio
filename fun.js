@@ -291,19 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
     DEBUG.performance.start('funPageInit');
 
     // === DEBUG: Level Skip UI (REMOVE BEFORE DEPLOYMENT) ===
-    if (!window.RELEASE_BUILD) {
-        const dbgDiv = document.createElement('div');
-        dbgDiv.style.cssText = 'position:fixed;top:1em;right:1em;z-index:9999;background:#222;padding:1em 1.5em;border-radius:8px;box-shadow:0 2px 8px #0003;color:#fff;font-family:monospace;opacity:0.95';
-        dbgDiv.innerHTML = '<b>DEBUG: Skip to Level</b> <input id="dbg-lvl-skip" type="number" min="1" max="14" style="width:3em;"> <button id="dbg-skip-btn">Go</button>';
-        document.body.appendChild(dbgDiv);
-        dbgDiv.querySelector('#dbg-skip-btn').onclick = function() {
-            const lvl = parseInt(dbgDiv.querySelector('#dbg-lvl-skip').value, 10);
-            if (lvl >= 1 && lvl <= 14 && typeof window.showLevel === 'function') {
-                window.showLevel(lvl);
-                if (typeof addFunCountdown === 'function') addFunCountdown(60);
-            }
-        };
-    }
+
     // === END DEBUG ===
 
 
