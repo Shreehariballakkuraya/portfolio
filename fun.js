@@ -536,7 +536,7 @@ const gameInitializers = {
     14: { name: 'Space Dodger', init: initSpaceDodger }
 };
 
-// LEVEL 15: Space Dodger / Jetpack Game
+// LEVEL 14: Space Dodger / Jetpack Game
 function initSpaceDodger() {
     const root = document.getElementById('space-dodger-root');
     if (!root) return;
@@ -607,6 +607,7 @@ function initSpaceDodger() {
     let meteorInterval;
     let hasShield = true;
     let running = true;
+    let animationFrameId;
 
     function move(dir) {
         if (!running) return;
@@ -646,7 +647,9 @@ function initSpaceDodger() {
     }, 600);
 
     function fail() {
+        if (!running) return;
         running = false;
+        cancelAnimationFrame(animationFrameId);
         clearInterval(meteorInterval);
         player.style.background = '#ff5e5e';
         playSound?.('error');
@@ -656,13 +659,18 @@ function initSpaceDodger() {
     }
 
     function win() {
+        if (!running) return;
         running = false;
+        cancelAnimationFrame(animationFrameId);
         clearInterval(meteorInterval);
+        document.removeEventListener('keydown', keyHandler);
         showMessage('You Win! 🚀', '#00f5d4');
         playSound?.('success');
-        document.removeEventListener('keydown', keyHandler);
         addFunCountdown?.(60);
-        setTimeout(() => showLevel?.(15), 1400);
+        setTimeout(() => {
+            root.innerHTML = ''; // Erase the game
+            showLevel(15);
+        }, 1400);
     }
 
     function showMessage(text, color) {
@@ -720,7 +728,7 @@ function initSpaceDodger() {
             }
         }
 
-        requestAnimationFrame(updateMeteors);
+        animationFrameId = requestAnimationFrame(updateMeteors);
     }
 
     // Start
@@ -832,7 +840,7 @@ function initCodeDebugging() {
             container.appendChild(btn);
 
             const status = document.createElement('div');
-            status.style.marginTop = '1em';
+            status.style.marginTop = '0.7em';
             status.style.fontWeight = 'bold';
             container.appendChild(status);
 
@@ -896,7 +904,14 @@ function initCodeDebugging() {
             setTimeout(() => textarea.focus(), 200);
         }
         function showLevel(n) {
-            // Trigger celebration overlay if all levels are completed
+            // Hide all level containers first
+            for (let i = 1; i <= 14; i++) {
+                const el = document.getElementById('fun-level' + i);
+                if (el) el.style.cssText = 'display: none !important;';
+            }
+            const celebrationEl = document.getElementById('fun-celebration');
+            if (celebrationEl) celebrationEl.style.display = 'none';
+
             if (n > 14) {
                 initCelebration();
                 return;
@@ -1058,7 +1073,6 @@ const CONFETTI_THRESHOLD = 5;
         
 function updateConfettiCounter() {
     DEBUG.performance.start('updateConfettiCounter');
-            DEBUG.performance.start('updateConfettiCounter');
             
             const btn = safeSelect('#confetti-btn');
             let counter = safeSelect('#confetti-counter');
@@ -1336,10 +1350,11 @@ if (quizContainer) {
     root.append(h3, input, btn, status);
 })();
 
-// LEVEL 14: Celebration & Surprise
+// --- CELEBRATION & SURPRISE ---
 function initCelebration() {
-    const root = document.getElementById('fun-level14');
+    const root = document.getElementById('fun-celebration');
     if (!root) return;
+    root.style.display = 'block';
     root.innerHTML = '';
     // Celebration message
     const msg = document.createElement('div');
@@ -1453,92 +1468,126 @@ showLevel(1);
 
 // LEVEL 4: Memory Game
 function initMemoryGame() {
-            const memoryGameRoot = document.getElementById('memory-game-root');
-            if (!memoryGameRoot) return;
-            memoryGameRoot.innerHTML = '';
-            // Container for instruction + grid
-            const container = document.createElement('div');
-            container.style.display = 'flex';
-            container.style.flexDirection = 'column';
-            container.style.alignItems = 'center';
-            // Instructions
-            const instr = document.createElement('div');
-            instr.textContent = 'Flip cards to find all matching pairs.';
-            instr.style.marginBottom = '1em';
-            instr.style.background = '#232946';
-            instr.style.color = '#00f5d4';
-            instr.style.padding = '0.7em 1em';
-            instr.style.borderRadius = '7px';
-            instr.style.fontWeight = 'bold';
-            container.appendChild(instr);
-            // Grid for cards
-            const grid = document.createElement('div');
-            grid.style.display = 'grid';
-            grid.style.gridTemplateColumns = 'repeat(4, 60px)';
-            grid.style.gridGap = '12px';
-            container.appendChild(grid);
-            memoryGameRoot.appendChild(container);
-            const emojis = ['🍎','🍌','🍇','🍒','🍉','🍋'];
-            const cardsArr = [...emojis, ...emojis];
-            shuffle(cardsArr);
-            let flipped = [];
-            let matched = [];
-            let lock = false;
-            // Create a 4x3 grid
-            cardsArr.forEach((emoji, idx) => {
-                const card = document.createElement('button');
-                card.className = 'memory-card';
-                card.setAttribute('aria-label', 'Memory card');
-                card.dataset.idx = idx;
-                card.style.width = '60px';
-                card.style.height = '60px';
-                card.style.fontSize = '2rem';
-                card.style.position = 'relative';
-                card.style.border = '2px solid #00f5d4';
-                card.style.borderRadius = '8px';
-                card.style.background = '#181f2a';
-                card.style.cursor = 'pointer';
-                card.innerHTML = '<span class="card-back" style="display:block;position:absolute;width:100%;height:100%;top:0;left:0;line-height:60px;text-align:center;font-size:2rem;">?</span><span class="card-front" style="display:none;position:absolute;width:100%;height:100%;top:0;left:0;line-height:60px;text-align:center;font-size:2rem;">'+emoji+'</span>';
-                card.addEventListener('click', function() {
-                    if (lock || matched.includes(idx) || flipped.includes(idx) || flipped.length >= 2) return;
-                    this.querySelector('.card-back').style.display = 'none';
-                    this.querySelector('.card-front').style.display = 'block';
-                    flipped.push(idx);
-                    if (flipped.length === 2) {
-                        lock = true;
-                        setTimeout(() => {
-                            const [i1,i2] = flipped;
-                            const c1 = grid.querySelector('[data-idx="'+i1+'"]');
-                            const c2 = grid.querySelector('[data-idx="'+i2+'"]');
-                            if (cardsArr[i1] === cardsArr[i2]) {
-                                matched.push(i1, i2);
-                                playSound('success');
-                                if (matched.length === cardsArr.length) {
-                                    setTimeout(() => {
-                                        const nextBtn = document.querySelector('#fun-level5 .complete-level-btn');
-                                        playSound('success');
-                                        if (nextBtn) nextBtn.click();
-                                        else showLevel(5);
-                                    }, 900);
-                                }
-                            } else {
-                                playSound('error');
-                                setTimeout(() => {
-                                    c1.querySelector('.card-back').style.display = 'block';
-                                    c1.querySelector('.card-front').style.display = 'none';
-                                    c2.querySelector('.card-back').style.display = 'block';
-                                    c2.querySelector('.card-front').style.display = 'none';
-                                }, 700);
-                            }
-                            flipped = [];
-                            lock = false;
-                        }, 700);
-                    }
-                });
-                // Add card to grid
-                grid.appendChild(card);
-            });
+    const root = document.getElementById('memory-game-root');
+    if (!root) return;
+    root.innerHTML = '';
+    
+    // Add CSS styles for card flip animation
+    const style = document.createElement('style');
+    style.textContent = `
+        .memory-card {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
         }
+        .memory-card.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            border: 2px solid #00f5d4;
+            border-radius: 8px;
+        }
+        .card-front {
+            background: #00f5d4;
+            color: #232946;
+            transform: rotateY(180deg);
+        }
+        .card-back {
+            background: #232946;
+            color: #00f5d4;
+        }
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            grid-gap: 10px;
+            justify-content: center;
+            margin: 1em auto;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Instructions
+    const instr = document.createElement('div');
+    instr.textContent = 'Find all matching pairs by clicking the cards!';
+    instr.style.marginBottom = '1em';
+    instr.style.background = '#232946';
+    instr.style.color = '#00f5d4';
+    instr.style.padding = '0.7em 1em';
+    instr.style.borderRadius = '7px';
+    instr.style.fontWeight = 'bold';
+    root.appendChild(instr);
+    
+    const emojis = ['🍎','🍌','🍇','🍒','🍉','🍋'];
+    const cardsArr = [...emojis, ...emojis].sort(() => 0.5 - Math.random());
+    let flipped = [];
+    let matched = 0;
+    let lock = false;
+
+    const container = document.createElement('div');
+    container.style.textAlign = 'center';
+    container.style.padding = '1em';
+    
+    // Create cards using the same structure as your example
+    let cardsHTML = cardsArr.map((emoji, idx) => `
+        <div class="memory-card" data-idx="${idx}">
+            <div class="card-face card-front">${emoji}</div>
+            <div class="card-face card-back">?</div>
+        </div>
+    `).join('');
+
+    container.innerHTML = `
+        <div class="memory-grid">${cardsHTML}</div>
+    `;
+    
+    root.appendChild(container);
+
+    const cards = root.querySelectorAll('.memory-card');
+    cards.forEach(card => card.addEventListener('click', () => {
+        if (lock || card.classList.contains('is-flipped') || flipped.length >= 2) return;
+        
+        card.classList.add('is-flipped');
+        flipped.push(card);
+
+        if (flipped.length === 2) {
+            lock = true;
+            const [card1, card2] = flipped;
+            if (card1.querySelector('.card-front').textContent === card2.querySelector('.card-front').textContent) {
+                matched++;
+                flipped = [];
+                lock = false;
+                if (matched === emojis.length) {
+                    const msg = document.createElement('div');
+                    msg.textContent = 'Memory Game Complete! 🎉';
+                    msg.style.margin = '1em auto';
+                    msg.style.fontWeight = 'bold';
+                    msg.style.color = '#00f5d4';
+                    msg.style.fontSize = '1.2em';
+                    root.appendChild(msg);
+                    addFunCountdown(60);
+                    setTimeout(() => showLevel(5), 1400);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('is-flipped');
+                    card2.classList.remove('is-flipped');
+                    flipped = [];
+                    lock = false;
+                }, 1200);
+            }
+        }
+    }));
+}
 
 
         // LEVEL 9: Trivia Wheel
@@ -1750,6 +1799,7 @@ function initMemoryGame() {
             let jumpsLeft = 2;
             let speed = 4;
             let running = true;
+            let animationFrameId;
         
             function jump() {
                 if (jumpsLeft > 0) {
@@ -1809,11 +1859,15 @@ function initMemoryGame() {
                     }
                 });
         
-                requestAnimationFrame(frame);
+                if (running) {
+                    animationFrameId = requestAnimationFrame(frame);
+                }
             }
         
             function fail() {
                 running = false;
+                cancelAnimationFrame(animationFrameId);
+                cancelAnimationFrame(animationFrameId);
                 player.style.background = '#ff5e5e';
                 showMessage('Oops! Try again.', '#ff6f61');
                 playSound?.('error');
@@ -1822,6 +1876,7 @@ function initMemoryGame() {
         
             function win() {
                 running = false;
+                cancelAnimationFrame(animationFrameId);
                 showMessage('You Win! 🎉', '#00f5d4');
                 playSound?.('success');
                 addFunCountdown?.(60);
