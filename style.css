@@ -416,12 +416,12 @@ nav ul li a:hover::after, nav ul li a.active::after {
 }
 
 /* Project Specific Images */
-.project-image-deepfake { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('deepfake.jpeg'); }
-.project-image-marriage { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('marriage.jpeg'); }
-.project-image-docuvault { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('docuvault.jpeg'); }
-.project-image-cricket { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('project1.jpeg'); }
-.project-image-churn { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('project2.jpeg'); }
-.project-image-montecarlo { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('monte.jpeg'); }
+.project-image-deepfake { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('image/deepfake.jpeg'); }
+.project-image-marriage { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('image/marriage.jpeg'); }
+.project-image-docuvault { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('image/docuvault.jpeg'); }
+.project-image-cricket { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('image/project1.jpeg'); }
+.project-image-churn { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('image/project2.jpeg'); }
+.project-image-montecarlo { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('image/monte.jpeg'); }
 
 .project-content {
     padding: 1.5rem;
