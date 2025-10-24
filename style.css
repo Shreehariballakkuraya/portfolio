@@ -458,6 +458,14 @@ nav ul li a:hover::after, nav ul li a.active::after {
 }
 
 /* --- Modal Styling --- */
+.modal-container {
+    /* Container for all project modals */
+    position: relative;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
 .modal {
     display: none; /* Initially hidden */
     position: fixed;
@@ -537,8 +545,50 @@ nav ul li a:hover::after, nav ul li a.active::after {
     padding-left: 1.5rem;
 }
 
+.modal-image {
+    width: 100%;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.modal-body {
+    margin-bottom: 20px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
 .modal-links {
     margin-top: 2rem;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
 }
 
 .modal-link {
@@ -871,4 +921,22 @@ footer {
     .contact-form {
         padding: 0 1rem;
     }
+}
+
+/* Admin dot - subtle access to admin */
+.admin-dot {
+    display: inline-block;
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 1.5em;
+    line-height: 0;
+    vertical-align: middle;
+    margin-left: 6px;
+    user-select: none;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.admin-dot:hover {
+    opacity: 0.8;
+    transform: scale(1.2);
 }

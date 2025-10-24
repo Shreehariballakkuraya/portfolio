@@ -1,0 +1,7 @@
+Flask==2.3.3
+Flask-CORS==4.0.0
+psycopg2-binary
+python-dotenv
+SQLAlchemy
+flask_sqlalchemy
+cloudinary>=1.32.0

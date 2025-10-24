@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .item-list {
+            margin-top: 20px;
+        }
+        
+        .item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-cog"></i> Admin Dashboard</h1>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-btn-profile">Profile</button>
+            <button class="tab-btn" id="tab-btn-skills">Skills</button>
+            <button class="tab-btn" id="tab-btn-projects">Projects</button>
+            <button class="tab-btn" id="tab-btn-education">Education</button>
+            <button class="tab-btn" id="tab-btn-social">Social Links</button>
+        </div>
+        
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="tab-content active">
+            <h2>Update Profile</h2>
+            <div id="profile-message" class="message"></div>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <input type="text" id="role" required>
+                </div>
+                <div class="form-group">
+                    <label for="about_text">About Text</label>
+                    <textarea id="about_text" required></textarea>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="projects_completed">Projects Completed</label>
+                        <input type="number" id="projects_completed" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="technologies_learned">Technologies Learned</label>
+                        <input type="number" id="technologies_learned" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="learning_mindset">Learning Mindset (%)</label>
+                    <input type="number" id="learning_mindset" required>
+                </div>
+                <button type="submit" class="btn">Update Profile</button>
+            </form>
+        </div>
+        
+        <!-- Skills Tab -->
+        <div id="skills-tab" class="tab-content">
+            <h2>Manage Skills</h2>
+            <div id="skills-message" class="message"></div>
+            <div id="skillsList" class="item-list"></div>
+            <h3>Add New Skill</h3>
+            <form id="skillForm">
+                <div class="form-group">
+                    <label for="skill_icon">Icon (Font Awesome class)</label>
+                    <input type="text" id="skill_icon" placeholder="fa-brands fa-python" required>
+                </div>
+                <div class="form-group">
+                    <label for="skill_title">Title</label>
+                    <input type="text" id="skill_title" required>
+                </div>
+                <div class="form-group">
+                    <label for="skill_description">Description</label>
+                    <input type="text" id="skill_description" required>
+                </div>
+                <button type="submit" class="btn">Add Skill</button>
+            </form>
+
+            <!-- Edit Skill Modal -->
+            <div id="editSkillModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center;">
+                <div style="background:white; padding:30px; border-radius:10px; min-width:300px; max-width:90vw; margin:auto; position:relative;">
+                    <h3>Edit Skill</h3>
+                    <form id="editSkillForm">
+                        <div class="form-group">
+                            <label for="edit_skill_icon">Icon (Font Awesome class)</label>
+                            <input type="text" id="edit_skill_icon" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_skill_title">Title</label>
+                            <input type="text" id="edit_skill_title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_skill_description">Description</label>
+                            <input type="text" id="edit_skill_description" required>
+                        </div>
+                        <input type="hidden" id="edit_skill_id">
+                        <div style="display:flex; gap:10px;">
+                            <button type="submit" class="btn">Save</button>
+                            <button type="button" class="btn btn-danger" onclick="closeEditSkillModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Projects Tab -->
+        <div id="projects-tab" class="tab-content">
+            <h2>Manage Projects</h2>
+            <div id="projects-message" class="message"></div>
+            <div id="projectsList" class="item-list"></div>
+            <h3>Add New Project</h3>
+            <form id="projectForm">
+                <div class="form-group">
+                    <label for="project_title">Title</label>
+                    <input type="text" id="project_title" required>
+                </div>
+                <div class="form-group">
+                    <label for="project_description">Description</label>
+                    <textarea id="project_description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="project_tech_tags">Tech Tags (comma-separated)</label>
+                    <input type="text" id="project_tech_tags" placeholder="Python, Flask, SQLAlchemy" required>
+                </div>
+                <div class="form-group">
+                    <label for="project_modal_content">Modal Content</label>
+                    <textarea id="project_modal_content"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="project_github_link">GitHub Link</label>
+                    <input type="url" id="project_github_link">
+                </div>
+                <div class="form-group">
+                    <label for="project_image">Project Image</label>
+                    <input type="file" id="project_image" accept="image/*">
+                </div>
+                <button type="submit" class="btn">Add Project</button>
+            </form>
+        </div>
+        
+        <!-- Education Tab -->
+        <div id="education-tab" class="tab-content">
+            <h2>Manage Education</h2>
+            <div id="education-message" class="message"></div>
+            <div id="educationList" class="item-list"></div>
+            <h3>Add New Education</h3>
+            <form id="educationForm">
+                <div class="form-group">
+                    <label for="edu_title">Title</label>
+                    <input type="text" id="edu_title" required>
+                </div>
+                <div class="form-group">
+                    <label for="edu_details">Details</label>
+                    <input type="text" id="edu_details">
+                </div>
+                <div class="form-group">
+                    <label for="edu_grade">Grade</label>
+                    <input type="text" id="edu_grade" required>
+                </div>
+                <button type="submit" class="btn">Add Education</button>
+            </form>
+        </div>
+        
+        <!-- Social Links Tab -->
+        <div id="social-tab" class="tab-content">
+            <h2>Manage Social Links</h2>
+            <div id="social-message" class="message"></div>
+            <div id="socialList" class="item-list"></div>
+            <h3>Add New Social Link</h3>
+            <form id="socialForm">
+                <div class="form-group">
+                    <label for="social_platform">Platform</label>
+                    <input type="text" id="social_platform" required>
+                </div>
+                <div class="form-group">
+                    <label for="social_url">URL</label>
+                    <input type="url" id="social_url" required>
+                </div>
+                <div class="form-group">
+                    <label for="social_icon">Icon (Font Awesome class)</label>
+                    <input type="text" id="social_icon" placeholder="fab fa-linkedin" required>
+                </div>
+                <button type="submit" class="btn">Add Social Link</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
