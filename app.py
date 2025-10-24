@@ -8,15 +8,39 @@ from functools import wraps
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+
+# Production configuration
+DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+app.config['DEBUG'] = DEBUG
+
+# CORS - restrict to specific origins in production
+if DEBUG:
+    CORS(app, supports_credentials=True)
+else:
+    # In production, specify your frontend domain
+    allowed_origins = os.environ.get('ALLOWED_ORIGINS', '').split(',')
+    CORS(app, supports_credentials=True, origins=allowed_origins)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'CHANGE-THIS-IN-PRODUCTION')
+
+# Session configuration for production
+app.config['SESSION_COOKIE_SECURE'] = not DEBUG  # HTTPS only in production
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
 db = SQLAlchemy(app)
 
-# Admin credentials (in production, hash passwords and store in DB)
+# Admin credentials - use hashed passwords in production
+from werkzeug.security import check_password_hash, generate_password_hash
+
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
+# In production, store hashed password in env: ADMIN_PASSWORD_HASH
+ADMIN_PASSWORD_HASH = os.environ.get('ADMIN_PASSWORD_HASH')
+if not ADMIN_PASSWORD_HASH and DEBUG:
+    # Development fallback - hash the default password
+    ADMIN_PASSWORD_HASH = generate_password_hash('admin123')
 
 # Models
 class Profile(db.Model):
@@ -58,13 +82,10 @@ class Project(db.Model):
     github_link = db.Column(db.Text)
     image = db.Column(db.Text)  # stores filename or URL
 # Import cloud storage functionality - Cloudinary
-from werkzeug.utils import secure_filename
 from cloudinary_storage import upload_file_to_cloudinary
 
-# Keep local folder option as fallback
-UPLOAD_FOLDER = 'project_images'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# File upload configuration
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max file size
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
@@ -85,7 +106,6 @@ def upload_project_image():
             
             if public_id and cloudinary_url:
                 # Successfully uploaded to Cloudinary
-                # Store the public_id for future reference (deletion, transformations, etc.)
                 return jsonify({
                     'success': True, 
                     'filename': public_id, 
@@ -93,32 +113,11 @@ def upload_project_image():
                     'storage': 'cloudinary'
                 })
             else:
-                # Fall back to local storage if Cloudinary upload fails
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                return jsonify({
-                    'success': True, 
-                    'filename': filename, 
-                    'url': f'/project_images/{filename}',
-                    'storage': 'local'
-                })
+                return jsonify({'error': 'Image upload to cloud failed'}), 500
         except Exception as e:
-            # If any error occurs, fall back to local storage
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return jsonify({
-                'success': True, 
-                'filename': filename, 
-                'url': f'/project_images/{filename}',
-                'storage': 'local'
-            })
+            return jsonify({'error': f'Image upload failed: {str(e)}'}), 500
             
     return jsonify({'error': 'Invalid file type'}), 400
-
-# Serve project images (only needed for local fallback)
-@app.route('/project_images/<path:filename>')
-def serve_project_image(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 class Education(db.Model):
     __tablename__ = 'education'
@@ -170,6 +169,18 @@ def serve_static_files(filename):
 def page_not_found(e):
     return send_from_directory('.', '404.html'), 404
 
+# Error handler for file size exceeded
+@app.errorhandler(413)
+def file_too_large(e):
+    return jsonify({'error': 'File size exceeds 5MB limit'}), 413
+
+# General error handler for production
+@app.errorhandler(500)
+def internal_error(e):
+    if DEBUG:
+        raise e
+    return jsonify({'error': 'An internal error occurred'}), 500
+
 # Admin login endpoint
 @app.route('/admin/login', methods=['POST'])
 def admin_login():
@@ -177,7 +188,8 @@ def admin_login():
     username = data.get('username')
     password = data.get('password')
     
-    if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+    # Use hashed password verification
+    if username == ADMIN_USERNAME and check_password_hash(ADMIN_PASSWORD_HASH, password):
         session['logged_in'] = True
         session['username'] = username
         return jsonify({"success": True, "message": "Login successful"})

@@ -310,8 +310,24 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
     let imageUrl = ''; // Changed from imageFilename to imageUrl
     
     if (imageInput.files && imageInput.files[0]) {
+        const file = imageInput.files[0];
+        
+        // Validate file size (max 5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (file.size > maxSize) {
+            showMessage('projects-message', 'Image size must be less than 5MB', 'error');
+            return;
+        }
+        
+        // Validate file type
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+            showMessage('projects-message', 'Only PNG, JPEG, and GIF images are allowed', 'error');
+            return;
+        }
+        
         const formData = new FormData();
-        formData.append('image', imageInput.files[0]);
+        formData.append('image', file);
         try {
             showMessage('projects-message', 'Uploading image to cloud...', 'info');
             const uploadRes = await fetch('/upload-project-image', {
